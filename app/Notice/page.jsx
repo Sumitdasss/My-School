@@ -1,5 +1,5 @@
 import React from 'react'
-import NoticeDetails from './[ID]/NoticeDetail'
+import NoticeDetails from './[id]/NoticeDetail'
 const page = () => {
   return (
     <div>

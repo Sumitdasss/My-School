@@ -2,12 +2,9 @@ import { BiArrowToLeft, BiCalendar, BiTag } from "react-icons/bi";
 import { notices } from "../../../Data/Data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-export default async function NoticeDetails({ params }) {
-  const { ID } = await params;
-
-  const notice = notices.find((item) => item.id === Number(ID));
+export default async function NoticeDetails({ id }) {
+  const notice = notices.find((item) => item.id === Number(id));
   if (!notice) return notFound();
-
   return (
 <div className="min-h-screen bg-[#F8F5F0]">
       {/* Back Button */}
