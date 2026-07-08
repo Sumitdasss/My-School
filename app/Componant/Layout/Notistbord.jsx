@@ -30,7 +30,7 @@ export default function NoticeBoard() {
           {latestNotices.map((notice, index) => (
            <Link
   key={notice.id}
-  href={`/Notice/${notice.id}`}
+  href={`/Notice?id=${notice.id}`}
   className="group bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#D4AF37]/40 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#D4AF37]/10"
 >
   <div className="flex items-start justify-between mb-6">
@@ -70,7 +70,7 @@ export default function NoticeBoard() {
         {/* View All Button */}
         <div className="text-center mt-12">
           <Link
-            href="/notice"
+            href="/Notice"
             className="inline-flex items-center gap-3 px-10 py-4 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0A1628] rounded-2xl font-semibold transition-all"
           >
             View All Notices

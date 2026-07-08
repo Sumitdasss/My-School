@@ -3,7 +3,7 @@ import { notices } from "../../../Data/Data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 export default async function NoticeDetails({ id }) {
-  const notice = notices.find((item) => item.id === Number(id));
+    const notice = notices.find((item) => item.id === Number(id));
   if (!notice) return notFound();
   return (
 <div className="min-h-screen bg-[#F8F5F0]">
@@ -48,7 +48,7 @@ export default async function NoticeDetails({ id }) {
           {notice.attachment && (
             <div className="mt-12 pt-8 border-t">
               <a
-                href={notice.attachment}
+             
                 target="_blank"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-[#D4AF37] hover:bg-[#E8C65A] text-[#0A1628] font-semibold rounded-2xl transition-all"
               >

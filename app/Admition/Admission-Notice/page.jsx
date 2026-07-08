@@ -39,7 +39,7 @@ export default function NoticeBoard() {
             admissionNotices.map((notice) => (
               <Link
                 key={notice.id}
-                href={`/Notice/${notice.id}`}
+                href={`/Notice?id=${notice.id}`}
                 className="group bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#D4AF37]/40 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#D4AF37]/10"
               >
                 <div className="flex items-start justify-between mb-6">
