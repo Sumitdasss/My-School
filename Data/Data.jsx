@@ -623,7 +623,7 @@ export const admitCardData = [
     group: "Science",
     section: "A",
     roll: "101",
-
+examtype:["Anual Exam","Yearly Exam"],
     session: "2025-2026",
     exam: "Test Examination",
     boardExam: "SSC 2026",
@@ -657,12 +657,12 @@ export const admitCardData = [
     rollNumber: "102",
     registrationNumber: "20261002",
     dateOfBirth: "2010-07-10",
-
+examtype:["Anual Exam","Half Yearly"],
     name: "Karim Hasan",
     fatherName: "Abdul Karim",
     motherName: "Rokeya Begum",
 
-    class: "Class 10",
+    class: "Class 9",
     group: "Science",
     section: "A",
     roll: "102",

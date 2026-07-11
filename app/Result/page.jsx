@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Search, Award, Printer, Download } from "lucide-react";
-import { admitCardData } from "../../../Data/Data";
+import { admitCardData } from "../../Data/Data";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { toPng } from "html-to-image";
@@ -14,7 +14,20 @@ export default function ExamResult() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [error2, setError2] = useState("");
+  const [selectExam, setSelectExam] = useState("");
+  const [selectClass, setSelectClass] = useState("");
   const [loading, setLoading] = useState(false);
+
+
+
+const exam = useMemo(() => {
+  return [...new Set(admitCardData.flatMap((item) => item.examtype).filter(Boolean))];
+}, []);
+const classOptions = useMemo(() => {
+  return [...new Set(admitCardData.flatMap((item) => item.class).filter(Boolean))];
+}, []);
+
+
 const handlePrint = useReactToPrint({
   contentRef: resultRef,
   documentTitle: `${result?.name}-Exam-Result`,
@@ -40,8 +53,11 @@ const handlePrint = useReactToPrint({
   setTimeout(() => {
     const student = admitCardData.find(
       (item) =>
-        item.rollNumber.trim() === searchTerm.rollNumber.trim() &&
-        item.name.toLowerCase().trim() === searchTerm.name.toLowerCase().trim()
+       item.rollNumber.trim() === searchTerm.rollNumber.trim() &&
+    item.name.toLowerCase().trim() === searchTerm.name.toLowerCase().trim() &&
+    item.class === selectClass &&
+    item.examtype.includes(selectExam)
+        
     );
 
     if (student) {
@@ -120,15 +136,81 @@ const gpa = result
           <form onSubmit={handleSearch} className="space-y-6">
             <div>
               <label className="block text-sm text-slate-600 mb-3">Roll Number / Registration Number</label>
+               <div className="relative w-full">
+  <select
+    className="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-700 shadow-sm outline-none transition-all duration-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+
+    value={selectClass}
+    onChange={(e) => setSelectClass(e.target.value)}
+  >
+    <option value="" disabled>
+      Select Class
+    </option>
+{classOptions?.map((classOption, index) => (
+  <option key={index} value={classOption}>
+    {classOption}
+  </option>
+))}
+
+  </select>
+
+  {/* Dropdown Icon */}
+  <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-gray-500">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+</div>
+
+              <div className="relative w-full">
+  <select
+    className="w-full mt-3
+     appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-700 shadow-sm outline-none transition-all duration-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+ 
+    value={selectExam}
+    onChange={(e) => setSelectExam(e.target.value)}
+  >
+    <option value="" disabled>
+      Select Exam Type
+    </option>
+{exam?.map((examType, index) => (
+  <option key={index} value={examType}>
+    {examType}
+  </option>
+))}
+
+  </select>
+
+  {/* Dropdown Icon */}
+  <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-gray-500">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+</div>
               <div className="relative">
-                <Search className="absolute left-5 top-4 text-slate-400" />
+                <Search className="absolute left-5 top-7 text-slate-400" />
                 <input
                   type="text"
                   name="rollNumber"
                   value={searchTerm?.rollNumber || ""}
                   onChange={handleChange}
                   placeholder="Enter Roll Number"
-                  className="w-full border border-slate-300 rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:border-[#D4AF37] transition-colors"
+                  className="w-full mt-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 border border-slate-300 rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:border-[#D4AF37] transition-colors"
                 />
               </div>
               <div className="relative mt-3">
@@ -139,7 +221,7 @@ const gpa = result
                   value={searchTerm?.name || ""}
                   onChange={handleChange}
                   placeholder="Enter your Name"
-                  className="w-full border border-slate-300 rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:border-[#D4AF37] transition-colors"
+                  className="w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 border border-slate-300 rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:border-[#D4AF37] transition-colors"
                 />
               </div>
             </div>

@@ -79,11 +79,9 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#3F5B16]"
-          : "bg-[#044F58]"
-      } border-b border-[#D9B65C]/15`}
+      className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 ${
+    scrolled ? "bg-[#3F5B16]" : "bg-[#044F58]"
+  } border-b border-[#D9B65C]/15`}
     >
       {/* layered gold hairline — bronze to champagne, feels engraved rather than flat */}
       <div className="h-[3px] w-full bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F]" />
