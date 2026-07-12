@@ -96,14 +96,13 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll Indicator */}
-     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center text-white/60">
-  <p className="text-xs tracking-widest mb-2 animate-scrollBounce">
+    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-white/60 z-20">
+  <p className="text-xs md:text-sm tracking-[0.3em] uppercase mb-2 animate-scrollBounce">
     SCROLL TO EXPLORE
   </p>
 
-  <FaArrowDownLong className="text-2xl text-white animate-scrollBounce" />
+  <FaArrowDownLong className="text-xl md:text-2xl text-white animate-scrollBounce" />
 </div>
-
       {/* Bottom Fade */}
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0A1628] to-transparent" />
     </section>
