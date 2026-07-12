@@ -29,10 +29,10 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-5 sm:px-8 max-w-5xl mx-auto pt-16 pb-20 md:pt-20">
+      <div className="relative mt-20 md:mt-0 z-10 text-center px-5 sm:px-8 max-w-5xl mx-auto pt-16 pb-20 md:pt-20">
         
         {/* Badge */}
-        <div className="inline-flex items-center pt-30 md:pt-0 gap-2 bg-white/10 backdrop-blur-lg px-6 py-2.5 rounded-full border border-[#D4AF37]/30 mb-6">
+        <div className="inline-flex items-center  gap-2 bg-white/10 backdrop-blur-lg px-6 py-2.5 rounded-full border border-[#D4AF37]/30 mb-6">
           <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse" />
           <span className="text-[#D4AF37] text-sm font-medium tracking-widest">
             ESTD 1998 • GOALKHALI IDEAL HIGH SCHOOL
