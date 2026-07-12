@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { School, Users, Award } from "lucide-react";
+import { FaArrowDownLong } from "react-icons/fa6";
 
 export default function HeroSection() {
   return (
@@ -15,9 +16,9 @@ export default function HeroSection() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source 
-          src="https://www.pexels.com/download/video/31889457/" 
-          type="video/mp4" 
+        <source
+          src="https://www.pexels.com/download/video/31889457/"
+          type="video/mp4"
         />
         Your browser does not support the video tag.
       </video>
@@ -95,10 +96,13 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center text-white/60">
-        <p className="text-xs tracking-widest mb-2">SCROLL TO EXPLORE</p>
-        <div className="w-px h-12 bg-gradient-to-b from-transparent via-[#D4AF37] to-transparent" />
-      </div>
+     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center text-white/60">
+  <p className="text-xs tracking-widest mb-2 animate-scrollBounce">
+    SCROLL TO EXPLORE
+  </p>
+
+  <FaArrowDownLong className="text-2xl text-white animate-scrollBounce" />
+</div>
 
       {/* Bottom Fade */}
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0A1628] to-transparent" />
