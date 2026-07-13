@@ -67,7 +67,7 @@ export default function Navbar() {
 
   // পোর্টালগুলোর জন্য কুইক অ্যাক্সেস ড্রপডাউন
   const portals = [
-    { name: "Student Portal", href: "/portal/student", icon: User },
+    { name: "Student Portal", href: "/Studentlogin", icon: User },
     { name: "Parent Portal", href: "/portal/parent", icon: BookOpen },
     { name: "Teacher Portal", href: "/portal/teacher", icon: FileText },
     { name: "Admin Dashboard", href: "/portal/admin", icon: LayoutDashboard },
