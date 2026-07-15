@@ -2,8 +2,8 @@ import { prisma } from "../../../lib/prisma";
 import fs from "fs";
 import path from "path";
 export async function GET() {
-  const students = await prisma.student.findMany();
-  return Response.json(students);
+  const parents = await prisma.Parent.findMany();
+  return Response.json(parents);
 }
 
 export async function POST(req) {
@@ -19,30 +19,33 @@ if (photo && photo.size > 0) {
   const bytes = await photo.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  // Unique File Name
   const fileName = `${Date.now()}-${photo.name}`;
 
-  // Save Location
+
   const uploadDir = path.join(process.cwd(), "public/uploads");
 
-  // File Save
+
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+
   fs.writeFileSync(
     path.join(uploadDir, fileName),
     buffer
   );
 
-  // Database-এ এই Path Save হবে
   photoPath = `/uploads/${fileName}`;
 }
 const fullName = formData.get("fullName");
-const fatherName = formData.get("fatherName");
-const motherName = formData.get("motherName");
-const dateOfBirth = formData.get("dateOfBirth");
-const phone = formData.get("phone");
 const email = formData.get("email");
+const phone = formData.get("phone");
+const childName = formData.get("childName");
+const childClass = formData.get("childClass");
+const childRoll = formData.get("childRoll");
 const password = formData.get("password");
 
-   const emailExists = await prisma.student.findUnique({
+   const emailExists = await prisma.Parent.findUnique({
       where: {
         email:email,
       },
@@ -56,7 +59,7 @@ const password = formData.get("password");
     }
 
     // Phone আছে কিনা
-    const phoneExists = await prisma.student.findUnique({
+    const phoneExists = await prisma.Parent.findUnique({
       where: {
         phone:phone,
       },
@@ -69,16 +72,16 @@ const password = formData.get("password");
       );
     }
 
-    const student = await prisma.student.create({
+    const student = await prisma.Parent.create({
       data: {
-       fullName,
-    fatherName,
-    motherName,
-    dateOfBirth: new Date(dateOfBirth),
-    phone,
-    email,
-    password,
-    photo: photoPath
+     fullName,
+email,
+phone,
+childName,
+childClass,
+childRoll,
+password,
+photo: photoPath
       },
     });
 

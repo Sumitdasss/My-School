@@ -3,26 +3,58 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { User, Lock, Mail, Eye, EyeOff } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 export default function StudentAuth() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
+    
     email: "",
     password: "",
-    rollNumber: "",
+
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(isLogin ? "Login Successful!" : "Registration Successful!");
-  };
+  const router = useRouter();
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const res = await fetch("/api/student/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email: formData.email,
+    password: formData.password,
+  }),
+});
+
+ const data = await res.json();
+
+if (res.ok) {
+  localStorage.setItem(
+    "student",
+    JSON.stringify(data.student)
+  );
+localStorage.setItem("student", JSON.stringify(data.student));
+
+
+window.dispatchEvent(new Event("student-login"));
+  router.push("/");
+} else {
+  alert(data.message);
+}
+
+
+
+
+};
 
   return (
     <div className="  bg-gradient-to-br from-[#0A1628] to-[#1A365D] flex items-center justify-center p-5">

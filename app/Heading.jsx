@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+
 import {
   Menu,
   X,
@@ -12,11 +14,15 @@ import {
   BookOpen,
   FileText,
 } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [scrolled2, setScrolled2] = useState(false);
+  const handel=()=>{
+    setScrolled2(!scrolled2)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -68,7 +74,7 @@ export default function Navbar() {
   // পোর্টালগুলোর জন্য কুইক অ্যাক্সেস ড্রপডাউন
   const portals = [
     { name: "Student Portal", href: "/Studentlogin", icon: User },
-    { name: "Parent Portal", href: "/portal/parent", icon: BookOpen },
+    { name: "Parent Portal", href: "/Preant", icon: BookOpen },
     { name: "Teacher Portal", href: "/portal/teacher", icon: FileText },
     { name: "Admin Dashboard", href: "/portal/admin", icon: LayoutDashboard },
   ];
@@ -76,6 +82,44 @@ export default function Navbar() {
   const toggleDropdown = (index) => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
+  const router =useRouter()
+const [user, setUser] = useState(null);
+
+useEffect(() => {
+  const loadUser = () => {
+    const student = localStorage.getItem("student");
+    const parent = localStorage.getItem("Parent");
+
+    if (student) {
+      setUser(JSON.parse(student));
+    } else if (parent && parent !== "undefined") {
+      setUser(JSON.parse(parent));
+    } else {
+      setUser(null);
+    }
+  };
+
+  loadUser();
+
+  window.addEventListener("student-login", loadUser);
+  window.addEventListener("Parent-login", loadUser);
+
+  return () => {
+    window.removeEventListener("student-login", loadUser);
+    window.removeEventListener("Parent-login", loadUser);
+  };
+}, []);
+console.log(user);
+
+const handleLogout = () => {
+  localStorage.removeItem("student");
+  localStorage.removeItem("Parent");
+
+  window.dispatchEvent(new Event("student-login"));
+
+  router.push("/Studentlogin");
+};
+
 
   return (
     <nav
@@ -151,7 +195,62 @@ export default function Navbar() {
           {/* Right Side - Portals + Mobile Menu */}
           <div className="flex items-center gap-3">
             {/* Desktop Portals */}
-            <div className="hidden xl:block relative group/portal">
+
+
+            {user ?(
+         
+  <div className="hidden xl:block relative group/profile">
+    <button className="flex items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
+
+      <img
+         src={user?.photo || "/default-user.png"}
+         alt={user?.fullName || "User"}
+        className="w-10 h-10 rounded-full object-cover border-2 border-white"
+      />
+
+      <span className="font-semibold text-[#081527]">
+        {user.fullName}
+      </span>
+
+      <ChevronDown
+        size={16}
+        className="group-hover/profile:rotate-180 transition-transform"
+      />
+    </button>
+
+    <div className="absolute right-0 mt-2 w-60 rounded-xl bg-white shadow-xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all">
+
+      <Link
+        href="/Studentlogin/StudentProfile" 
+        className="block px-4 py-3 hover:bg-gray-100"
+      >
+        My Profile
+      </Link>
+
+      <Link
+        href="/student/result"
+        className="block px-4 py-3 hover:bg-gray-100"
+      >
+        My Result
+      </Link>
+
+      <Link
+        href="/student/admit-card"
+        className="block px-4 py-3 hover:bg-gray-100"
+      >
+        Admit Card
+      </Link>
+
+      <button
+        onClick={handleLogout}
+        className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
+      >
+        Logout
+      </button>
+
+    </div>
+  </div>
+            ):(       <div className="hidden xl:block relative group/portal">
               <button className="flex items-center space-x-2 px-5 py-2.5 text-sm font-semibold text-[#081527] bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] rounded-full shadow-[0_4px_18px_rgba(217,182,92,0.35)] hover:shadow-[0_6px_26px_rgba(217,182,92,0.55)] hover:brightness-105 transition-all">
                 <span>Portals</span>
                 <ChevronDown
@@ -178,8 +277,8 @@ export default function Navbar() {
                   );
                 })}
               </div>
-            </div>
-
+            </div>)}
+          
             {/* Mobile Hamburger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -276,7 +375,76 @@ export default function Navbar() {
           ))}
 
           {/* Portals Section for Mobile */}
-          <div className="pt-5 mt-4 border-t-2 border-[#081527]/[0.06]">
+
+
+
+
+
+          {user ?(<>
+
+         <div className="md:hidden mt-10  relative ">
+    <button onClick={handel} className="flex w-full items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
+
+      <img
+         src={user?.photo || "/default-user.png"}
+         alt={user?.fullName || "User"}
+        className="w-10 h-10 rounded-full object-cover border-2 border-white"
+      />
+
+      <span className="font-semibold text-[#081527]">
+        {user.fullName}
+      </span>
+
+      <ChevronDown
+        size={16}
+        className="group-hover/profile:rotate-180 transition-transform"
+      />
+    </button>
+
+    <div className={`absolute ${scrolled2?"max-h-80":"max-h-0"} duration-300  overflow-hidden left-0 mt-2 w-60 rounded-xl bg-white shadow-xl  transition-all`}>
+
+      <Link
+      onClick={()=>setIsOpen(false)}
+        href="/Studentlogin/StudentProfile"
+        className="block px-4 py-3 hover:bg-gray-100"
+      >
+        My Profile
+      </Link>
+
+      <Link
+        onClick={()=>setIsOpen(false)}
+        href="/student/result"
+        className="block px-4 py-3 hover:bg-gray-100"
+      >
+        My Result
+      </Link>
+
+      <Link
+        onClick={()=>setIsOpen(false)}
+        href="/student/admit-card"
+        className="block px-4 py-3 hover:bg-gray-100"
+      >
+        Admit Card
+      </Link>
+
+      <button
+onClick={() => {
+  handleLogout();
+  setIsOpen(false);
+}}
+        
+        className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
+      >
+        Logout
+      </button>
+
+    </div>
+  </div>
+          
+          </>):(<>
+          
+          
+           <div className="pt-5 mt-4 border-t-2 border-[#081527]/[0.06]">
             <p className="px-3 text-[11px] font-bold text-[#9AA6B8] uppercase tracking-widest mb-2.5">
               User Portals
             </p>
@@ -301,6 +469,9 @@ export default function Navbar() {
               })}
             </div>
           </div>
+          
+          </>)}
+         
         </div>
       </div>
     </nav>

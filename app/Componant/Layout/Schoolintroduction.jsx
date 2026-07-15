@@ -7,7 +7,7 @@ import { GraduationCap, Award, Users, Clock } from "lucide-react";
 export default function SchoolIntroduction() {
   return (
     <section className="bg-gradient-to-r from-[#0A1628] via-[#10243D] to-[#1A365D] py-16 md:py-24 lg:py-28 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-5 md:px-8">
+      <div className="max-w-360 mx-auto px-5 md:px-8">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* Left Side - Image (Now on top in mobile) */}
