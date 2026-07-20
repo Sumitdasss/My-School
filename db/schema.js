@@ -5,8 +5,9 @@ import {
   text,
     integer,
   timestamp,
+  boolean,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";;
+
 export const Teacher = pgTable("Teacher", {
   id: serial("id").primaryKey(),
 
@@ -96,4 +97,13 @@ parentId: integer("parent_id")
     .notNull(),
 
 });
-
+export const Admin = pgTable("admins", {
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: text("password").notNull(),
+  fullName: varchar("full_name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 50 }).default("admin"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});

@@ -77,7 +77,7 @@ export default function Navbar() {
     { name: "Student Portal", href: "/Studentlogin", icon: User },
     { name: "Parent Portal", href: "/Preant", icon: BookOpen },
     { name: "Teacher Portal", href: "/Teacher/Teacherlogin", icon: FileText },
-    { name: "Admin Dashboard", href: "/portal/admin", icon: LayoutDashboard },
+    { name: "Admin Dashboard", href: "", icon: LayoutDashboard },
   ];
 
   const toggleDropdown = (index) => {
