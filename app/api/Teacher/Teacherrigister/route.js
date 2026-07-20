@@ -1,11 +1,6 @@
-
-
-
-
-
-import { db } from "../../../db/index";
-import { Parent, Students } from "../../../db/schema";
-import { eq,and  } from "drizzle-orm";
+import { db } from "../../../../db/index";
+import {Teacher} from "../../../../db/schema"
+import { eq } from "drizzle-orm";
 import fs from "fs"
 import path from "path";
 import bcrypt from "bcryptjs";
@@ -30,20 +25,16 @@ export async function POST(req) {
     }
 
     const fullName = formData.get("fullName");
-    const email = formData.get("email");
+    const dateOfBirth = formData.get("dateOfBirth");
     const phone = formData.get("phone");
-    const childName = formData.get("childName");
-    const childClass = formData.get("childClass");
-    const childRoll = formData.get("childRoll");
+    const email = formData.get("email");
     const password = formData.get("password");
-    const childEmail = formData.get("childEmail");
-  
 
     // Email Check
     const emailExists = await db
       .select()
-      .from(Parent)
-      .where(eq(Parent.email, email));
+      .from(Teacher)
+      .where(eq(Teacher.email, email));
 
     if (emailExists.length > 0) {
       return Response.json(
@@ -55,8 +46,8 @@ export async function POST(req) {
     // Phone Check
     const phoneExists = await db
       .select()
-      .from(Parent)
-      .where(eq(Parent.phone, phone));
+      .from(Teacher)
+      .where(eq(Teacher.phone, phone));
 
     if (phoneExists.length > 0) {
       return Response.json(
@@ -66,55 +57,19 @@ export async function POST(req) {
     }
 const hashedPassword = await bcrypt.hash(password, 10);
     // Insert
-  const parent = await db
-  .insert(Parent)
-  .values({
-    fullName,
-    phone,
-    email,
-    childName,
-    childClass,
-    childRoll,
-    childEmail,
-
-    password: hashedPassword,
-    photo: photoPath,
-  })
-  .returning();
-
-const newParentId = parent[0].id;
-
-const student = await db
-  .select()
-  .from(Students)
-  .where(
-    and(
-      eq(Students.fullName, childName),
-      eq(Students.rollNumber, childRoll)
-    )
-  );
-
-console.log("Child Name:", childName);
-console.log("Child Roll:", childRoll);
-console.log("Student Found:", student);
-
-
-if (student.length > 0) {
-  await db
-    .update(Students)
-    .set({
-      parentId: newParentId,
-    })
-    .where(eq(Students.id, student[0].id));
-} else {
-  console.log("⚠️ No matching student found for update!");
-}
-
-
+    await db.insert(Teacher).values({
+      fullName,
+     
+      dateOfBirth: new Date(dateOfBirth),
+      phone,
+      email,
+      password:hashedPassword,
+      photo: photoPath,
+    });
 
     return Response.json({
       success: true,
-     message: "Student Registered Successfully",
+     message: "Teacher Registered Successfully",
     });
   } catch (err) {
     return Response.json(
@@ -122,7 +77,4 @@ if (student.length > 0) {
       { status: 500 }
     );
   }
-
-
-  
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
@@ -75,7 +76,7 @@ export default function Navbar() {
   const portals = [
     { name: "Student Portal", href: "/Studentlogin", icon: User },
     { name: "Parent Portal", href: "/Preant", icon: BookOpen },
-    { name: "Teacher Portal", href: "/portal/teacher", icon: FileText },
+    { name: "Teacher Portal", href: "/Teacher/Teacherlogin", icon: FileText },
     { name: "Admin Dashboard", href: "/portal/admin", icon: LayoutDashboard },
   ];
 
@@ -85,35 +86,77 @@ export default function Navbar() {
   const router =useRouter()
 const [user, setUser] = useState(null);
 
-useEffect(() => {
-  const loadUser = () => {
-    const student = localStorage.getItem("student");
-    const parent = localStorage.getItem("Parent");
 
-    if (student) {
-      setUser(JSON.parse(student));
-    } else if (parent && parent !== "undefined") {
-      setUser(JSON.parse(parent));
-    } else {
+useEffect(() => {
+
+  const loadUser = () => {
+
+    const student1 = localStorage.getItem("student");
+    const parent = localStorage.getItem("Parent");
+    const teacher = localStorage.getItem("Teacher");
+
+
+    try {
+
+      if (student1 && student1 !== "undefined") {
+
+        setUser(JSON.parse(student1));
+
+      } 
+      else if (parent && parent !== "undefined") {
+
+        setUser(JSON.parse(parent));
+
+      } 
+      else if (teacher && teacher !== "undefined") {
+
+        setUser(JSON.parse(teacher));
+
+      } 
+      else {
+
+        setUser(null);
+
+      }
+
+    } catch(error) {
+
+      console.log("JSON Parse Error:", error);
+
+      localStorage.removeItem("student");
+      localStorage.removeItem("Parent");
+      localStorage.removeItem("Teacher");
+
       setUser(null);
     }
+
   };
+
 
   loadUser();
 
   window.addEventListener("student-login", loadUser);
   window.addEventListener("Parent-login", loadUser);
+  window.addEventListener("Teacher-login", loadUser);
+
 
   return () => {
     window.removeEventListener("student-login", loadUser);
     window.removeEventListener("Parent-login", loadUser);
+    window.removeEventListener("Teacher-login", loadUser);
   };
+
 }, []);
+
+
+ 
+
 console.log(user);
 
 const handleLogout = () => {
   localStorage.removeItem("student");
   localStorage.removeItem("Parent");
+  localStorage.removeItem("Teacher");
 
   window.dispatchEvent(new Event("student-login"));
 
@@ -217,29 +260,74 @@ const handleLogout = () => {
         className="group-hover/profile:rotate-180 transition-transform"
       />
     </button>
+{localStorage.getItem("student")&&(<>
 
+
+
+</>)
+
+}
     <div className="absolute right-0 mt-2 w-60 rounded-xl bg-white shadow-xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all">
 
-      <Link
-        href="/Studentlogin/StudentProfile" 
-        className="block px-4 py-3 hover:bg-gray-100"
-      >
-        My Profile
-      </Link>
+    {localStorage.getItem("student") && (
+  <>
+    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+      My Profile
+    </Link>
 
-      <Link
-        href="/student/result"
-        className="block px-4 py-3 hover:bg-gray-100"
-      >
-        My Result
-      </Link>
+    <Link href="/student/result" className="block px-4 py-3 hover:bg-gray-100">
+      My Result
+    </Link>
 
-      <Link
-        href="/student/admit-card"
-        className="block px-4 py-3 hover:bg-gray-100"
-      >
-        Admit Card
-      </Link>
+    <Link href="/student/admit-card" className="block px-4 py-3 hover:bg-gray-100">
+      Admit Card
+    </Link>
+  </>
+)}
+
+{localStorage.getItem("Parent") && (
+  <>
+    <Link href="/Parentlogin/ParentProfile" className="block px-4 py-3 hover:bg-gray-100">
+      My Profile
+    </Link>
+
+    <Link href="/ChildrenPage" className="block px-4 py-3 hover:bg-gray-100">
+      Child Profile
+    </Link>
+
+    <Link href="/Parent/ChildResult" className="block px-4 py-3 hover:bg-gray-100">
+      Child Result
+    </Link>
+
+    <Link href="/Parent/Attendance" className="block px-4 py-3 hover:bg-gray-100">
+      Attendance
+    </Link>
+  </>
+)}
+
+{localStorage.getItem("Teacher") && (
+  <>
+    <Link href="/Teacher/TeacherProfile" className="block px-4 py-3 hover:bg-gray-100">
+      My Profile
+    </Link>
+
+    <Link href="/Teacher/Students" className="block px-4 py-3 hover:bg-gray-100">
+      Students
+    </Link>
+
+    <Link href="/Teacher/Attendance" className="block px-4 py-3 hover:bg-gray-100">
+      Attendance
+    </Link>
+
+    <Link href="/Teacher/Result" className="block px-4 py-3 hover:bg-gray-100">
+      Manage Result
+    </Link>
+  </>
+)}
+
+
+
+
 
       <button
         onClick={handleLogout}

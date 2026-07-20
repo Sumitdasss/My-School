@@ -1,28 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Student {
-  id              Int      @id @default(autoincrement())
-  fullName        String
-  fatherName      String
-  motherName      String
-  dateOfBirth     DateTime
-
-  phone           String   @unique
-  email           String   @unique
-  password        String
-  photo           String?
-
-
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  dateOfBirth DateTime
+  email       String   @unique
+  fatherName  String
+  fullName    String
+  motherName  String
+  password    String
+    parentId    Int?      
+  parent      Parent?   @relation(fields: [parentId], references: [id])
+  phone       String   @unique
+  updatedAt   DateTime @updatedAt
+  photo       String?
 }
 
 model Parent {
@@ -34,6 +32,9 @@ model Parent {
   childClass String
   childRoll  String
   password   String
+   students   Student[]
   photo      String?
   createdAt  DateTime @default(now())
 }
+
+

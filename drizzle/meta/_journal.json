@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1784460193770,
+      "tag": "0000_low_ben_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784461976102,
+      "tag": "0001_empty_kinsey_walden",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784471982235,
+      "tag": "0002_lethal_screwball",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784476670051,
+      "tag": "0003_fat_stardust",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784478360499,
+      "tag": "0004_keen_the_order",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1784481194512,
+      "tag": "0005_perpetual_mathemanic",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784481540490,
+      "tag": "0006_conscious_vector",
+      "breakpoints": true
+    }
+  ]
+}

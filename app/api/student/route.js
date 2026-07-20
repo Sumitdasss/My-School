@@ -1,94 +1,98 @@
-import { prisma } from "../../../lib/prisma";
-import fs from "fs";
-import path from "path";
-export async function GET() {
-  const students = await prisma.student.findMany();
-  return Response.json(students);
-}
 
+
+
+
+
+
+import { db } from "../../../db/index";
+import {Students} from "../../../db/schema"
+import { eq } from "drizzle-orm";
+import fs from "fs"
+import path from "path";
+import bcrypt from "bcryptjs";
 export async function POST(req) {
   try {
-   const formData = await req.formData();
+    const formData = await req.formData();
 
+    const photo = formData.get("photo");
+    let photoPath = "";
 
-   
-const photo = formData.get("photo");
-let photoPath = "";
+    if (photo && photo.size > 0) {
+      const bytes = await photo.arrayBuffer();
+      const buffer = Buffer.from(bytes);
 
-if (photo && photo.size > 0) {
-  const bytes = await photo.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+      const fileName = `${Date.now()}-${photo.name}`;
 
-  // Unique File Name
-  const fileName = `${Date.now()}-${photo.name}`;
+      const uploadDir = path.join(process.cwd(), "public/uploads");
 
-  // Save Location
-  const uploadDir = path.join(process.cwd(), "public/uploads");
+      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
 
-  // File Save
-  fs.writeFileSync(
-    path.join(uploadDir, fileName),
-    buffer
-  );
+      photoPath = `/uploads/${fileName}`;
+    }
 
-  // Database-এ এই Path Save হবে
-  photoPath = `/uploads/${fileName}`;
-}
-const fullName = formData.get("fullName");
-const fatherName = formData.get("fatherName");
-const motherName = formData.get("motherName");
-const dateOfBirth = formData.get("dateOfBirth");
-const phone = formData.get("phone");
-const email = formData.get("email");
-const password = formData.get("password");
+   const fullName = formData.get("fullName");
+    const fatherName = formData.get("fatherName");
+    const motherName = formData.get("motherName");
+    const dateOfBirth = formData.get("dateOfBirth");
+    const phone = formData.get("phone");
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const rollNumber = formData.get("rollNumber");
+    // Email Check
+    const emailExists = await db
+      .select()
+      .from(Students)
+      .where(eq(Students.email, email));
 
-   const emailExists = await prisma.student.findUnique({
-      where: {
-        email:email,
-      },
-    });
-
-    if (emailExists) {
+    if (emailExists.length > 0) {
       return Response.json(
-        { error: "This email is already registered." },
+        { error: "Email already exists" },
         { status: 400 }
       );
     }
 
-    // Phone আছে কিনা
-    const phoneExists = await prisma.student.findUnique({
-      where: {
-        phone:phone,
-      },
-    });
+    // Phone Check
+    const phoneExists = await db
+      .select()
+      .from(Students)
+      .where(eq(Students.phone, phone));
 
-    if (phoneExists) {
+    if (phoneExists.length > 0) {
       return Response.json(
-        { error: "This phone number is already registered." },
+        { error: "Phone already exists" },
         { status: 400 }
       );
     }
+const hashedPassword = await bcrypt.hash(password, 10);
+    // Insert
 
-    const student = await prisma.student.create({
-      data: {
-       fullName,
-    fatherName,
-    motherName,
-    dateOfBirth: new Date(dateOfBirth),
-    phone,
-    email,
-    password,
-    photo: photoPath
-      },
+
+
+    await db.insert(Students).values({
+      fullName,
+      dateOfBirth: new Date(dateOfBirth),
+      phone,
+      fatherName,
+      email,
+      motherName,
+      rollNumber,
+      password:hashedPassword,
+      photo: photoPath,
     });
 
-    return Response.json(student);
+    return Response.json({
+      success: true,
+     message: "Student Registered Successfully",
+    });
   } catch (error) {
-    console.log(error);
+  console.error(error);
 
-    return Response.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
+  return Response.json(
+    {
+      message: error.message,
+      stack: error.stack,
+    },
+    { status: 500 }
+  );
+}
 }

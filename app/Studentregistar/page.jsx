@@ -20,7 +20,10 @@ export default function StudentRegister() {
     phone: "",
     email: "",
     password: "",
+    rollNumber:"",
     confirmPassword: "",
+  
+  
   });
 
   const handleChange = (e) => {
@@ -57,6 +60,8 @@ export default function StudentRegister() {
     data.append("phone", formData.phone);
     data.append("email", formData.email);
     data.append("password", formData.password);
+    data.append("rollNumber", formData.rollNumber);
+   
 
     // Image
     if (imageFile) {
@@ -174,6 +179,19 @@ export default function StudentRegister() {
                   placeholder="Mother's name"
                 />
               </div>
+              <div>
+                <label className="block text-sm text-slate-300 mb-2">Roll Number</label>
+                <input
+                  type="text"
+                  name="rollNumber"
+                  value={formData.rollNumber}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37] text-white placeholder:text-slate-400"
+                  placeholder="Roll Number"
+                />
+              </div>
+              
             </div>
 
             {/* Rest of your form fields remain the same */}

@@ -39,18 +39,16 @@ export default function ParentLogin() {
    console.log(data);
   
   if (res.ok) {
-    localStorage.setItem(
-      "Parent",
-      JSON.stringify(data.Parent)
-    );
-  localStorage.setItem("Parent", JSON.stringify(data.Parent));
-  
-  
-  window.dispatchEvent(new Event("Parent-login"));
+    localStorage.setItem("token", data.token);
+localStorage.setItem("Parent", JSON.stringify(data.Parentall));
+localStorage.setItem("students", JSON.stringify(data.students));
+    window.dispatchEvent(new Event("Parent-login"));
+
     router.push("/");
   } else {
-    alert(data.message);
+    alert(data.message || data.error);
   }
+
   
   
   

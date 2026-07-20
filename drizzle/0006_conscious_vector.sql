@@ -1,0 +1,2 @@
+ALTER TABLE "Students" ADD COLUMN "parent_id" integer;--> statement-breakpoint
+ALTER TABLE "Students" ADD CONSTRAINT "Students_parent_id_Parent_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."Parent"("id") ON DELETE no action ON UPDATE no action;

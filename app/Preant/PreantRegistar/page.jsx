@@ -21,6 +21,7 @@ export default function ParentRegister() {
     phone: "",
     childName: "",
     childClass: "",
+    childEmail: "",
     childRoll: "",
     password: "",
     confirmPassword: "",
@@ -61,6 +62,7 @@ export default function ParentRegister() {
     data.append("childClass", formData.childClass);
     data.append("childRoll", formData.childRoll);
     data.append("password", formData.password);
+    data.append("childEmail", formData.childEmail);
 
     // Image
     if (imageFile) {
@@ -140,6 +142,19 @@ export default function ParentRegister() {
                     required
                     className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
                     placeholder="parent@email.com"
+                  />
+                </div>
+                <label className="block text-sm text-slate-300 mb-2">childEmail Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-5 top-4 text-slate-400" />
+                  <input
+                    type="email"
+                    name="childEmail"
+                    value={formData.childEmail}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
+                    placeholder="Student Email"
                   />
                 </div>
               </div>

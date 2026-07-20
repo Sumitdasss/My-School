@@ -1,5 +1,5 @@
 import { db } from "../../../../db/index";
-import { Students } from "../../../../db/schema";
+import { Teacher } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -8,21 +8,21 @@ export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    const Student = await db
+    const teachers = await db
       .select()
-      .from(Students)
-      .where(eq(Students.email, email));
+      .from(Teacher)
+      .where(eq(Teacher.email, email));
 
-    if (Student.length === 0) {
+    if (teachers.length === 0) {
       return Response.json(
-        { message: "Student not found" },
+        { message: "Teacher not found" },
         { status: 404 }
       );
     }
 
-    const Studentall = Student[0];
+    const teacher = teachers[0];
 
-    const match = await bcrypt.compare(password, Studentall.password);
+    const match = await bcrypt.compare(password, teacher.password);
 
     if (!match) {
       return Response.json(
@@ -33,8 +33,8 @@ export async function POST(req) {
 
     const token = jwt.sign(
       {
-        id: Studentall.id,
-        email: Studentall.email,
+        id: teacher.id,
+        email: teacher.email,
       },
       process.env.JWT_SECRET,
       {
@@ -45,18 +45,15 @@ export async function POST(req) {
     return Response.json({
       success: true,
       token,
-      Studentall,
+      teacher,
     });
 
   } catch (error) {
-  console.error(error);
+    console.log(error);
 
-  return Response.json(
-    {
-      message: error.message,
-      stack: error.stack,
-    },
-    { status: 500 }
-  );
-}
+    return Response.json(
+      { error: error.message },
+      { status: 500 }
+    );
+  }
 }

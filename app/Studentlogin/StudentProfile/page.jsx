@@ -9,10 +9,12 @@ const Profile = () => {
 
    const [student, setStudent] = useState(null);
 const [parent, setParent] = useState(null);
+const [techer, setTeacheer] = useState(null);
 
 useEffect(() => {
   const user = localStorage.getItem("student");
   const prent = localStorage.getItem("Parent"); // key একই রাখতে হবে
+  const techer2 = localStorage.getItem("Teacher"); // key একই রাখতে হবে
 
   if (prent) {
     setParent(JSON.parse(prent));
@@ -21,8 +23,11 @@ useEffect(() => {
   if (user) {
     setStudent(JSON.parse(user));
   }
+  if (techer2) {
+    setTeacheer(JSON.parse(techer2));
+  }
 }, []);
-const userData = student || parent;
+const userData = student || parent ||techer;
   if (!userData) return <h1>Loading...</h1>;
   return (
    <div className="min-h-screen bg-slate-100 py-28">
@@ -47,7 +52,7 @@ const userData = student || parent;
         </p>
 
         <span className="inline-block mt-3 px-4 py-1 rounded-full bg-green-500">
-          Active Student
+          {student?"Student":parent?"Preants":techer?"Teacher":""}
         </span>
       </div>
 

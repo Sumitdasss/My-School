@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { User, Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+
 export default function StudentAuth() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +26,7 @@ export default function StudentAuth() {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const res = await fetch("/api/student/login", {
+  const res = await fetch("/api/Teacher/Teacherlogin", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -36,12 +38,13 @@ const handleSubmit = async (e) => {
 });
 
  const data = await res.json();
+ console.log(data)
 
- if (res.ok) {
+    if (res.ok) {
     localStorage.setItem("token", data.token);
-    localStorage.setItem("student", JSON.stringify(data.Studentall));
+    localStorage.setItem("Teacher", JSON.stringify(data.teacher));
 
-    window.dispatchEvent(new Event("student-login"));
+    window.dispatchEvent(new Event("Teacher-login"));
 
     router.push("/");
   } else {
@@ -77,30 +80,16 @@ const handleSubmit = async (e) => {
             <div className="mx-auto w-16 h-16 bg-[#D4AF37] rounded-2xl flex items-center justify-center mb-6">
               <User className="text-[#0A1628]" size={32} />
             </div>
-            <h2 className="text-3xl font-bold text-white">Student Portal</h2>
+            <h2 className="text-3xl font-bold text-white">Teacher Portal</h2>
             <p className="text-slate-300 mt-2">
               {isLogin ? "Sign in to your account" : "Create your student account"}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {!isLogin && (
-              <div>
-                <label className="block text-sm text-slate-300 mb-2">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            )}
-
+          
             <div>
-              <label className="block text-sm text-slate-300 mb-2">Email or Roll Number</label>
+              <label className="block text-sm text-slate-300 mb-2">Email </label>
               <input
                 type="text"
                 name="email"
@@ -108,7 +97,7 @@ const handleSubmit = async (e) => {
                 onChange={handleChange}
                 required
                 className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                placeholder="student@email.com or Roll No"
+                placeholder="student@email.com "
               />
             </div>
 
@@ -144,7 +133,7 @@ const handleSubmit = async (e) => {
 
           <div className="text-center mt-8">
             <a
-                href="/Studentregistar"
+                href="/Teacher/Teacherrigistar"
               className="text-[#D4AF37] hover:text-white transition-colors"
             >
               {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
