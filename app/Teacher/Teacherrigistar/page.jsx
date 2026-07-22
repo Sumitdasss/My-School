@@ -110,7 +110,7 @@ export default function StudentRegister() {
                 <User className="text-[#0A1628]" size={48} />
               )}
             </div>
-            <h2 className="text-4xl font-serif font-bold text-white">Create Student Account</h2>
+            <h2 className="text-4xl font-serif font-bold text-white">Create Teacher Account</h2>
             <p className="text-slate-300 mt-3">Join Goalkhali Ideal High School</p>
           </div>
 

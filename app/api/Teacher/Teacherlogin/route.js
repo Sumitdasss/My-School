@@ -1,5 +1,5 @@
 import { db } from "../../../../db/index";
-import { Teacher } from "../../../../db/schema";
+import { Teacher,TeacherLoginHistory } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -42,6 +42,11 @@ export async function POST(req) {
       }
     );
 
+
+await db.insert(TeacherLoginHistory).values({
+  TeacherId: teacher.id,
+  loginAt: new Date(),
+});
     return Response.json({
       success: true,
       token,
@@ -49,10 +54,13 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.log(error);
+    console.error("Full Error:", error);
+  console.error("Cause:", error.cause);
 
     return Response.json(
-      { error: error.message },
+      {  error: error.message,
+      cause: error.cause,
+      stack: error.stack, },
       { status: 500 }
     );
   }

@@ -1,9 +1,10 @@
 import { db } from "../../../../db/index";
-import { Students } from "../../../../db/schema";
+import { Students,LoginHistory } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
+import emitter from "../../../../lib/events.js"
+import "../../../../lib/listener.js"
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
@@ -41,6 +42,12 @@ export async function POST(req) {
         expiresIn: "7d",
       }
     );
+await db.insert(LoginHistory).values({
+  studentId: Studentall.id,
+  loginAt: new Date(),
+});
+    
+emitter.emit("student-login", Studentall);
 
     return Response.json({
       success: true,

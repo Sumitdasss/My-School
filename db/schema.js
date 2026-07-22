@@ -107,3 +107,36 @@ export const Admin = pgTable("admins", {
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
 });
+export const LoginHistory = pgTable("LoginHistory", {
+  id: serial("id").primaryKey(),
+
+  studentId: integer("student_id")
+    .notNull()
+    .references(() => Students.id),
+
+  loginAt: timestamp("login_at")
+    .defaultNow()
+    .notNull(),
+});
+export const ParentLoginHistory = pgTable("ParentLoginHistory", {
+  id: serial("id").primaryKey(),
+
+  ParentId: integer("Parent_id")
+    .notNull()
+    .references(() => Parent.id),
+
+  loginAt: timestamp("login_at")
+    .defaultNow()
+    .notNull(),
+});
+export const TeacherLoginHistory = pgTable("TeacherLoginHistory", {
+  id: serial("id").primaryKey(),
+
+  TeacherId: integer("Teacher_id")
+    .notNull()
+    .references(() => Teacher.id),
+
+  loginAt: timestamp("login_at")
+    .defaultNow()
+    .notNull(),
+});

@@ -1,5 +1,5 @@
 import { db } from "../../../../db/index";
-import { Parent, Students } from "../../../../db/schema";
+import { Parent, Students,ParentLoginHistory } from "../../../../db/schema";
 import { eq ,and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -65,7 +65,10 @@ const students = await db
         expiresIn: "7d",
       }
     );
-
+await db.insert(ParentLoginHistory).values({
+  ParentId: Parentall.id,
+  loginAt: new Date(),
+});
     return Response.json({
       success: true,
       token,
@@ -74,12 +77,15 @@ const students = await db
     });
 
   } catch (error) {
-     console.log("ERROR:", error);
-  console.log("MESSAGE:", error.message);
-  console.log("CAUSE:", error.cause);
-    return Response.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
+  console.log(error.cause);
+
+  return Response.json(
+    {
+      error: error.message,
+      cause: error.cause?.message,
+      detail: error.cause,
+    },
+    { status: 500 }
+  );
+}
 }

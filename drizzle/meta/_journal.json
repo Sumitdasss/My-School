@@ -71,6 +71,27 @@
       "when": 1784557156360,
       "tag": "0009_productive_domino",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1784726777449,
+      "tag": "0010_polite_hedge_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1784727398695,
+      "tag": "0011_polite_hardball",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1784727861641,
+      "tag": "0012_acoustic_blur",
+      "breakpoints": true
     }
   ]
 }
