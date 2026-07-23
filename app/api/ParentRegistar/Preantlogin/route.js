@@ -3,6 +3,8 @@ import { Parent, Students,ParentLoginHistory } from "../../../../db/schema";
 import { eq ,and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import emitter from "../../../../lib/events";
+import "../../../../lib/listener.js"
 
 export async function POST(req) {
   try {
@@ -69,6 +71,7 @@ await db.insert(ParentLoginHistory).values({
   ParentId: Parentall.id,
   loginAt: new Date(),
 });
+emitter.emit("Parent Login",Parentall)
     return Response.json({
       success: true,
       token,

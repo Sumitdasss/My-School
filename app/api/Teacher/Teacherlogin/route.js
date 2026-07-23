@@ -3,7 +3,8 @@ import { Teacher,TeacherLoginHistory } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
+import emitter from "../../../../lib/events";
+import "../../../../lib/listener.js"
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
@@ -47,6 +48,7 @@ await db.insert(TeacherLoginHistory).values({
   TeacherId: teacher.id,
   loginAt: new Date(),
 });
+emitter.emit("Teacher Login",teacher)
     return Response.json({
       success: true,
       token,
