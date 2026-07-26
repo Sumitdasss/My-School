@@ -311,7 +311,7 @@ const handleLogout = () => {
       My Profile
     </Link>
 
-    <Link href="/Teacher/Students" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/AllStudent" className="block px-4 py-3 hover:bg-gray-100">
       Students
     </Link>
 
