@@ -22,6 +22,8 @@ export default function StudentRegister() {
     password: "",
     rollNumber:"",
     confirmPassword: "",
+    section:"",
+class:""
   
   
   });
@@ -61,6 +63,8 @@ export default function StudentRegister() {
     data.append("email", formData.email);
     data.append("password", formData.password);
     data.append("rollNumber", formData.rollNumber);
+    data.append("class", formData.class);
+    data.append("section", formData.section);
    
 
     // Image
@@ -223,6 +227,36 @@ export default function StudentRegister() {
                     required
                     className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
                     placeholder="017XX-XXXXXX"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-slate-300 mb-2">Class</label>
+                <div className="relative">
+                  <Phone className="absolute left-5 top-4 text-slate-400" />
+                  <input
+                    type="text"
+                    name="class"
+                    value={formData.class}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
+                    placeholder="Class"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-slate-300 mb-2">Section</label>
+                <div className="relative">
+                  <Phone className="absolute left-5 top-4 text-slate-400" />
+                  <input
+                    type="text"
+                    name="section"
+                    value={formData.section}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
+                    placeholder="Section"
                   />
                 </div>
               </div>

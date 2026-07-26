@@ -1,0 +1,1 @@
+ALTER TABLE "Results" ALTER COLUMN "teacher_id" DROP NOT NULL;

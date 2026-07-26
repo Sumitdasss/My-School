@@ -1,0 +1,802 @@
+{
+  "id": "79c71ac5-9d9a-40e5-92e3-786b7e8baeb3",
+  "prevId": "2113c65f-3e85-4a0f-b5c9-57fd6b63224f",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.admins": {
+      "name": "admins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'admin'"
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "admins_email_unique": {
+          "name": "admins_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Exams": {
+      "name": "Exams",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "exam_name": {
+          "name": "exam_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exam_year": {
+          "name": "exam_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "class": {
+          "name": "class",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section": {
+          "name": "section",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.LoginHistory": {
+      "name": "LoginHistory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "login_at": {
+          "name": "login_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "LoginHistory_student_id_Students_id_fk": {
+          "name": "LoginHistory_student_id_Students_id_fk",
+          "tableFrom": "LoginHistory",
+          "tableTo": "Students",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Parent": {
+      "name": "Parent",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "child_email": {
+          "name": "child_email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "child_name": {
+          "name": "child_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "child_class": {
+          "name": "child_class",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "child_roll": {
+          "name": "child_roll",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "photo": {
+          "name": "photo",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Parent_email_unique": {
+          "name": "Parent_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "Parent_phone_unique": {
+          "name": "Parent_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ParentLoginHistory": {
+      "name": "ParentLoginHistory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "Parent_id": {
+          "name": "Parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "login_at": {
+          "name": "login_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ParentLoginHistory_Parent_id_Parent_id_fk": {
+          "name": "ParentLoginHistory_Parent_id_Parent_id_fk",
+          "tableFrom": "ParentLoginHistory",
+          "tableTo": "Parent",
+          "columnsFrom": [
+            "Parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Results": {
+      "name": "Results",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exam_id": {
+          "name": "exam_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "marks_obtained": {
+          "name": "marks_obtained",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_marks": {
+          "name": "total_marks",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 100
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Results_student_id_Students_id_fk": {
+          "name": "Results_student_id_Students_id_fk",
+          "tableFrom": "Results",
+          "tableTo": "Students",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "Results_exam_id_Exams_id_fk": {
+          "name": "Results_exam_id_Exams_id_fk",
+          "tableFrom": "Results",
+          "tableTo": "Exams",
+          "columnsFrom": [
+            "exam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "Results_subject_id_Subjects_id_fk": {
+          "name": "Results_subject_id_Subjects_id_fk",
+          "tableFrom": "Results",
+          "tableTo": "Subjects",
+          "columnsFrom": [
+            "subject_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "Results_teacher_id_Teacher_id_fk": {
+          "name": "Results_teacher_id_Teacher_id_fk",
+          "tableFrom": "Results",
+          "tableTo": "Teacher",
+          "columnsFrom": [
+            "teacher_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Students": {
+      "name": "Students",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_name": {
+          "name": "father_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_name": {
+          "name": "mother_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "photo": {
+          "name": "photo",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "class": {
+          "name": "class",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section": {
+          "name": "section",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Students_parent_id_Parent_id_fk": {
+          "name": "Students_parent_id_Parent_id_fk",
+          "tableFrom": "Students",
+          "tableTo": "Parent",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Students_phone_unique": {
+          "name": "Students_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
+          ]
+        },
+        "Students_roll_number_unique": {
+          "name": "Students_roll_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "roll_number"
+          ]
+        },
+        "Students_email_unique": {
+          "name": "Students_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Subjects": {
+      "name": "Subjects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subject_name": {
+          "name": "subject_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "class": {
+          "name": "class",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Teacher": {
+      "name": "Teacher",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "photo": {
+          "name": "photo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Teacher_phone_unique": {
+          "name": "Teacher_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
+          ]
+        },
+        "Teacher_email_unique": {
+          "name": "Teacher_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.TeacherAssignments": {
+      "name": "TeacherAssignments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "class": {
+          "name": "class",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section": {
+          "name": "section",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "TeacherAssignments_teacher_id_Teacher_id_fk": {
+          "name": "TeacherAssignments_teacher_id_Teacher_id_fk",
+          "tableFrom": "TeacherAssignments",
+          "tableTo": "Teacher",
+          "columnsFrom": [
+            "teacher_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "TeacherAssignments_subject_id_Subjects_id_fk": {
+          "name": "TeacherAssignments_subject_id_Subjects_id_fk",
+          "tableFrom": "TeacherAssignments",
+          "tableTo": "Subjects",
+          "columnsFrom": [
+            "subject_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.TeacherLoginHistory": {
+      "name": "TeacherLoginHistory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "Teacher_id": {
+          "name": "Teacher_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "login_at": {
+          "name": "login_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "TeacherLoginHistory_Teacher_id_Teacher_id_fk": {
+          "name": "TeacherLoginHistory_Teacher_id_Teacher_id_fk",
+          "tableFrom": "TeacherLoginHistory",
+          "tableTo": "Teacher",
+          "columnsFrom": [
+            "Teacher_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

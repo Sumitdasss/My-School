@@ -6,6 +6,7 @@ import {
     integer,
   timestamp,
   boolean,
+  unique 
 } from "drizzle-orm/pg-core";
 
 export const Teacher = pgTable("Teacher", {
@@ -85,7 +86,8 @@ parentId: integer("parent_id")
   photo: varchar("photo", { length: 500 }),
 
 
-  
+   class1: varchar("class", { length: 20 }).notNull(),      
+  section: varchar("section", { length: 10 }).notNull(),
 
 
   createdAt: timestamp("created_at")
@@ -109,14 +111,11 @@ export const Admin = pgTable("admins", {
 });
 export const LoginHistory = pgTable("LoginHistory", {
   id: serial("id").primaryKey(),
-
+  // ✅ onDelete: "cascade" যোগ করো
   studentId: integer("student_id")
     .notNull()
-    .references(() => Students.id),
-
-  loginAt: timestamp("login_at")
-    .defaultNow()
-    .notNull(),
+    .references(() => Students.id, { onDelete: "cascade" }),
+  loginAt: timestamp("login_at").defaultNow().notNull(),
 });
 export const ParentLoginHistory = pgTable("ParentLoginHistory", {
   id: serial("id").primaryKey(),
@@ -140,3 +139,64 @@ export const TeacherLoginHistory = pgTable("TeacherLoginHistory", {
     .defaultNow()
     .notNull(),
 });
+
+export const Subjects = pgTable("Subjects", {
+  id: serial("id").primaryKey(),
+  subjectName: varchar("subjectname", { length: 100 }).notNull(),
+  class1: varchar("class", { length: 20 }).notNull(),
+});
+
+
+export const TeacherAssignments = pgTable("TeacherAssignments", {
+  id: serial("id").primaryKey(),
+  teacherId: integer("teacher_id")
+    .notNull()
+    .references(() => Teacher.id, { onDelete: "cascade" }),
+  subjectId: integer("subject_id")
+    .notNull()
+    .references(() => Subjects.id, { onDelete: "cascade" }),
+  class1: varchar("class", { length: 20 }).notNull(),
+  section: varchar("section", { length: 10 }).notNull(),
+});
+
+
+export const Exams = pgTable("Exams", {
+  id: serial("id").primaryKey(),
+  examName: varchar("exam_name", { length: 50 }).notNull(),
+  examYear: integer("exam_year").notNull(),
+  class1: varchar("class", { length: 20 }).notNull(),
+  section: varchar("section", { length: 10 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+
+export const Results = pgTable(
+"Results",
+{
+ id: serial("id").primaryKey(),
+
+ studentId: integer("student_id").notNull(),
+
+ examId: integer("exam_id").notNull(),
+
+ subjectId: integer("subject_id").notNull(),
+
+ teacherId: integer("teacher_id"),
+
+ marksObtained: integer("marks_obtained").notNull(),
+
+ totalMarks: integer("total_marks").notNull(),
+
+ createdAt: timestamp("created_at")
+ .defaultNow(),
+
+},
+(table)=>({
+ uniqueResult: unique()
+ .on(
+   table.studentId,
+   table.examId,
+   table.subjectId
+ )
+})
+);

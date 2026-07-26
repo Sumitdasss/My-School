@@ -38,6 +38,8 @@ export async function POST(req) {
     const email = formData.get("email");
     const password = formData.get("password");
     const rollNumber = formData.get("rollNumber");
+    const class1 = formData.get("class");
+    const section = formData.get("section");
     // Email Check
     const emailExists = await db
       .select()
@@ -78,6 +80,8 @@ const hashedPassword = await bcrypt.hash(password, 10);
       rollNumber,
       password:hashedPassword,
       photo: photoPath,
+      class1,
+      section
     });
 
     return Response.json({
