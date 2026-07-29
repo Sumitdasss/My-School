@@ -127,6 +127,20 @@
       "when": 1784990637849,
       "tag": "0017_sturdy_riptide",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1785147064232,
+      "tag": "0018_green_leper_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1785336006707,
+      "tag": "0019_nervous_jigsaw",
+      "breakpoints": true
     }
   ]
 }

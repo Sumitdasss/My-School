@@ -12,10 +12,12 @@ import {
 
   ChevronRight,
   LogOut,
+  Cross,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+
+
 
 // Next.js Link imported for Quick Actions
 
@@ -259,13 +261,11 @@ const addResult = async () => {
   loadResults(selectedResultStudent, selectedResultExam);
 };
   // Quick Action Routes & Config
-  const ADD_ROUTES = {
-    student: "/students/add",
-    teacher: "/teachers/add",
-    parent: "/parents/add",
-    notice: "/notices/add",
-  };
-
+  
+const [isopen,setisopen]=useState(false)
+const handelchangee=()=>{
+  setisopen(!isopen)
+}
   const quickActions = [
     {
       key: "student",
@@ -290,13 +290,104 @@ const addResult = async () => {
     },
     {
       key: "notice",
+      button:handelchangee,
       label: "Post notice",
       sub: "Publish an announcement",
       icon: "📢",
       color: "from-rose-600 to-pink-600",
     },
   ];
+  const [loading, setLoading] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
+     const [imagePreview, setImagePreview] = useState(null);
+const [deta, setdata] = useState({
+  title: "",
+  slug: "",
+  category: "",
+  date: "",
+  urgent: false,
+  shortDescription: "",
+  description: "",
+});
+const handelCnagee = (e) => {
+  const { name, value, type, checked } = e.target;
 
+  setdata((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : value,
+  }));
+};
+const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+
+  if (file) {
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+  };
+
+ const handelSubmit = async (e) => {
+  e.preventDefault();
+
+  setLoading(true);
+
+  try {
+    const formData = new FormData();
+
+    formData.append("title", deta.title);
+    formData.append("slug", deta.slug);
+    formData.append("category", deta.category);
+    formData.append("date", deta.date);
+    formData.append("urgent", deta.urgent);
+
+    formData.append(
+      "shortDescription",
+      deta.shortDescription
+    );
+
+    formData.append(
+      "description",
+      deta.description
+    );
+
+    if (imageFile) {
+      formData.append("file", imageFile);
+    }
+
+    const res = await fetch("/api/Notice", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.error || "Notice Add Failed");
+      return;
+    }
+
+    alert("Notice Added Successfully");
+
+    setdata({
+      title: "",
+      slug: "",
+      category: "",
+      date: "",
+      urgent: false,
+      shortDescription: "",
+      description: "",
+    });
+
+    setImageFile(null);
+    setImagePreview(null);
+    setisopen(false);
+  } catch (err) {
+    console.log(err);
+    alert("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="space-y-10 p-6">
       {/* Header */}
@@ -441,9 +532,9 @@ const addResult = async () => {
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {quickActions.map((action) => (
-            <Link
+            <button
               key={action.key}
-              href={ADD_ROUTES[action.key]}
+              onClick={action.button}
               className="group bg-white rounded-3xl shadow-xl shadow-gray-200/80 border border-gray-100 p-6 flex flex-col hover:-translate-y-1 transition-all duration-300"
             >
               <div
@@ -454,9 +545,193 @@ const addResult = async () => {
 
               <p className="font-semibold text-gray-900">{action.label}</p>
               <p className="text-sm text-gray-400 mt-1">{action.sub}</p>
-            </Link>
+            </button>
           ))}
         </div>
+{isopen && (
+  <div className="fixed inset-0 z-50 flex top-20  items-center justify-center p-4">
+    {/* Backdrop */}
+    <div
+      className="absolute  inset-0 bg-slate-900/60 backdrop-blur-sm"
+      onClick={() => setisopen(false)}
+    />
+
+    {/* Modal */}
+    <form onSubmit={handelSubmit}  className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-slate-100">
+      
+      {/* Header */}
+      <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl">
+        <div>
+          <h2 className="text-xl font-bold text-white tracking-tight">
+            Create Notice
+          </h2>
+          <p className="text-blue-100 text-sm mt-0.5">
+            Fill in the details below
+          </p>
+        </div>
+
+        <button
+          onClick={() => setisopen(false)}
+          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/15 hover:bg-white/25 text-white transition-colors"
+        >
+          <Cross />
+        </button>
+      </div>
+
+      {/* Form Body */}
+      <div className="p-6 space-y-5">
+
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            Notice Title
+          </label>
+          <input
+             type="text"
+  name="title"
+  value={deta.title}
+  onChange={handelCnagee}
+            placeholder="Enter Notice Title"
+            className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          />
+        </div>
+
+        {/* Slug */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            Slug
+          </label>
+          <input
+            type="text"
+            name="slug"
+              value={deta.slug}
+            onChange={handelCnagee}
+            placeholder="ssc-examination-2026-routine-published"
+            className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition font-mono"
+          />
+        </div>
+
+        {/* Category + Date (side by side) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Category
+            </label>
+            <select
+              name="category"
+                value={deta.category}
+            onChange={handelCnagee}
+              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            >
+              <option value="">Select Category</option>
+              <option>Exam</option>
+              <option>Notice</option>
+              <option>Holiday</option>
+              <option>Admission</option>
+              <option>Sports</option>
+              <option>Event</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Date
+            </label>
+            <input
+              type="date"
+              name="date"
+               value={deta.date}
+            onChange={handelCnagee}
+              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
+          </div>
+        </div>
+
+        {/* Urgent */}
+        <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition select-none">
+          <input
+             type="checkbox"
+  name="urgent"
+  checked={deta.urgent}
+  onChange={handelCnagee}
+            className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+          />
+          <div>
+            <span className="font-semibold text-slate-800 text-sm">
+              Urgent Notice
+            </span>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Mark this notice as high priority
+            </p>
+          </div>
+        </label>
+
+        {/* Short Description */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            Short Description
+          </label>
+          <textarea
+            rows={3}
+            name="shortDescription"
+            value={deta.shortDescription}
+            onChange={handelCnagee}
+            placeholder="Short Description..."
+            className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
+          />
+        </div>
+
+        {/* Full Description */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            Full Description
+          </label>
+          <textarea
+            rows={8}
+            name="description"
+              value={deta.description}
+            onChange={handelCnagee}
+            placeholder="Full Notice..."
+            className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-y"
+          />
+        </div>
+
+        {/* PDF Attachment */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            PDF Attachment
+          </label>
+          <div className="relative">
+            <input
+             type="file"
+  accept=".pdf"
+  onChange={handleImageChange}
+              className="w-full border border-dashed border-slate-300 rounded-xl px-4 py-6 text-sm bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Actions */}
+      <div className="sticky bottom-0 flex items-center justify-end gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100 rounded-b-2xl">
+        <button
+          type="button"
+          onClick={() => setisopen(false)}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-200 transition"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 transition"
+        >
+          Publish Notice
+        </button>
+      </div>
+    </form>
+  </div>
+)}
+     
       </div>
 
       {/* ADMIN MANAGEMENT SECTION (Subjects, Exams, Assignments) */}

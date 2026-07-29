@@ -6,7 +6,8 @@ import {
     integer,
   timestamp,
   boolean,
-  unique 
+  unique ,
+  date
 } from "drizzle-orm/pg-core";
 
 export const Teacher = pgTable("Teacher", {
@@ -200,3 +201,48 @@ export const Results = pgTable(
  )
 })
 );
+
+export const Attendance = pgTable(
+  "Attendance",
+  {
+    id: serial("id").primaryKey(),
+
+    studentId: integer("student_id")
+      .notNull()
+      .references(() => Students.id, { onDelete: "cascade" }),
+
+    attendanceDate: date("attendance_date").notNull(),
+
+    status: varchar("status", { length: 10 }).notNull(), // "Yes" বা "No"
+
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    uniqueAttendance: unique("unique_student_attendance").on(
+      table.studentId,
+      table.attendanceDate
+    ),
+  })
+);
+
+export const Notices = pgTable("notices", {
+  id: serial("id").primaryKey(),
+
+  title: varchar("title", { length: 255 }).notNull(),
+
+  slug: varchar("slug", { length: 255 }).unique().notNull(),
+
+  category: varchar("category", { length: 100 }).notNull(),
+
+  date: varchar("date", { length: 100 }).notNull(),
+
+  urgent: boolean("urgent").default(false),
+
+  shortDescription: text("short_description"),
+
+  description: text("description"),
+
+  attachment: varchar("attachment", { length: 500 }),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
