@@ -246,3 +246,50 @@ export const Notices = pgTable("notices", {
 
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+
+
+
+// =============================
+// Routine Header
+// =============================
+export const ClassRoutine = pgTable("ClassRoutine", {
+  id: serial("id").primaryKey(),
+
+  className: varchar("class_name", { length: 20 }).notNull(),
+
+  section: varchar("section", { length: 10 }).notNull(),
+
+  shift: varchar("shift", { length: 20 }).notNull(),
+
+  day: varchar("day", { length: 20 }).notNull(),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// =============================
+// Routine Period
+// =============================
+export const RoutinePeriod = pgTable("RoutinePeriod", {
+  id: serial("id").primaryKey(),
+
+  routineId: integer("routine_id")
+    .references(() => ClassRoutine.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+
+  period: integer("period").notNull(),
+
+  startTime: varchar("start_time", { length: 20 }).notNull(),
+
+  endTime: varchar("end_time", { length: 20 }).notNull(),
+
+  subject: varchar("subject", { length: 100 }).notNull(),
+
+  teacher: varchar("teacher", { length: 100 }).notNull(),
+
+  room: varchar("room", { length: 50 }),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});

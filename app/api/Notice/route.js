@@ -70,3 +70,25 @@ export async function POST(req) {
   );
 }
 }
+
+
+export async function GET() {
+  try {
+    const notices = await db.select().from(Notices);
+
+    return Response.json({
+      success: true,
+      data: notices,
+    });
+  } catch (err) {
+    console.error(err);
+
+    return Response.json(
+      {
+        success: false,
+        message: "Failed to fetch notices",
+      },
+      { status: 500 }
+    );
+  }
+}

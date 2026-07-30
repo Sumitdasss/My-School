@@ -266,6 +266,10 @@ const [isopen,setisopen]=useState(false)
 const handelchangee=()=>{
   setisopen(!isopen)
 }
+const [isopen11,setisopen11]=useState(false)
+const handelchangee11=()=>{
+  setisopen11(!isopen11)
+}
   const quickActions = [
     {
       key: "student",
@@ -296,6 +300,14 @@ const handelchangee=()=>{
       icon: "📢",
       color: "from-rose-600 to-pink-600",
     },
+    {
+      key: "rutine",
+      button:handelchangee11,
+      label: "Post rutinee",
+      sub: "Publish an announcement",
+      icon: "📢",
+      color: "from-rose-600 to-pink-600",
+    },
   ];
   const [loading, setLoading] = useState(false);
     const [imageFile, setImageFile] = useState(null);
@@ -317,6 +329,7 @@ const handelCnagee = (e) => {
     [name]: type === "checkbox" ? checked : value,
   }));
 };
+
 const handleImageChange = (e) => {
     const file = e.target.files?.[0];
 
@@ -388,6 +401,80 @@ const handleImageChange = (e) => {
     setLoading(false);
   }
 };
+
+const[deta22,setdeta22]=useState({
+
+className:"",
+section:"",
+shift:"",
+day:"",
+period:"",
+time:"",
+subject:"",
+teacher:""
+
+})
+ const [loading22, setLoading22] = useState(false);
+
+const handelCnagee22 = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  setdeta22((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : value,
+  }));
+};
+
+const handelSubmit22=async(e)=>{
+  e.preventDefault();
+
+  setLoading22(true);
+
+  try {
+    const formData = new FormData();
+
+    formData.append("className", deta22.className);
+    formData.append("section", deta22.section);
+    formData.append("shift", deta22.shift);
+    formData.append("period", deta22.period);
+    formData.append("time", deta22.time);
+    formData.append("subject", deta22.subject);
+    formData.append("teacher", deta22.teacher);
+    formData.append("day", deta22.day);
+
+    
+
+    
+    const res = await fetch("/api/Rutine", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.error || "Notice Add Failed");
+      return;
+    }
+
+    alert("Notice Added Successfully");
+
+
+
+  
+    
+  } catch (err) {
+  console.error(err);
+  alert("Something went wrong");
+} finally {
+    setLoading22(false);
+  }
+}
+
+
+
+
+
   return (
     <div className="space-y-10 p-6">
       {/* Header */}
@@ -731,6 +818,175 @@ const handleImageChange = (e) => {
     </form>
   </div>
 )}
+
+{isopen11 && (
+  <>
+    {/* Backdrop */}
+    <div className="fixed inset-0 bg-black/50 z-40"></div>
+
+    {/* Modal */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b px-6 py-4 rounded-t-2xl flex justify-between items-center">
+          <h2 className="text-xl font-bold text-gray-800">Add Class Routine</h2>
+          <button
+            onClick={() => setisopen11(false)}
+            className="text-gray-500 hover:text-gray-800 text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Form Body */}
+        <form className="p-6" onSubmit={handelSubmit22}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            {/* Class */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Class</label>
+              <select
+                name="className"
+                value={deta22.className}
+                onChange={handelCnagee22}
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              >
+                <option value="">Select Class</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+              </select>
+            </div>
+
+            {/* Section */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Section</label>
+              <select
+                name="section"
+                 value={deta22.section}
+                onChange={handelCnagee22}
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              >
+                <option value="">Select Section</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+
+            {/* Shift */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Shift</label>
+              <select
+                name="shift"
+                 value={deta22.shift}
+                onChange={handelCnagee22}
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              >
+                <option value="">Select Shift</option>
+                <option value="Morning">Morning</option>
+                <option value="Day">Day</option>
+              </select>
+            </div>
+
+            {/* Day */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Day</label>
+              <select
+                name="day"
+                 value={deta22.day}
+                onChange={handelCnagee22}
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              >
+                <option value="">Select Day</option>
+                <option value="Sunday">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+              </select>
+            </div>
+
+            {/* Period */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Period</label>
+              <input
+                type="number"
+                name="period"
+                 value={deta22.period}
+                onChange={handelCnagee22}
+                placeholder="e.g. 1"
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              />
+            </div>
+
+            {/* Time */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Time</label>
+              <input
+                type="text"
+                name="time"
+                  value={deta22.time}
+                onChange={handelCnagee22}
+                placeholder="08:00 - 08:45"
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              />
+            </div>
+
+            {/* Subject */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
+              <input
+                type="text"
+                name="subject"
+                  value={deta22.subject}
+                onChange={handelCnagee22}
+                placeholder="Mathematics"
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              />
+            </div>
+
+            {/* Teacher */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher</label>
+              <input
+                type="text"
+                name="teacher"
+                 value={deta22.teacher}
+                onChange={handelCnagee22}
+                placeholder="Mr. Rahman"
+                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              />
+            </div>
+
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-8 flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => setisopen11(false)}
+              className="px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white font-medium shadow-md hover:shadow-lg transition"
+            >
+              Save Routine
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </>
+)}
+
+
      
       </div>
 

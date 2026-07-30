@@ -1,10 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bell, Calendar, ArrowRight } from "lucide-react";
-import { notices } from "../../../Data/Data";
+
 export default function NoticeBoard() {
+
+ const [notices, setNotices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+ useEffect(() => {
+  fetch("/api/Notice")
+    .then((res) => res.json())
+    .then((data) => {
+      setNotices(data.data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setLoading(false);
+    });
+}, []);
 
   const latestNotices = notices.slice(0, 4);
   return (
