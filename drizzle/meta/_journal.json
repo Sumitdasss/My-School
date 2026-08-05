@@ -155,6 +155,34 @@
       "when": 1785428457118,
       "tag": "0021_mysterious_dark_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1785588323159,
+      "tag": "0022_unique_mentor",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1785826083172,
+      "tag": "0023_nice_silvermane",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1785827420280,
+      "tag": "0024_material_william_stryker",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1785851279523,
+      "tag": "0025_kind_colossus",
+      "breakpoints": true
     }
   ]
 }

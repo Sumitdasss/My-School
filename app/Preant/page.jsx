@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { User, Lock, Eye, EyeOff, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
 export default function ParentLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,6 +45,7 @@ localStorage.setItem("students", JSON.stringify(data.students));
     window.dispatchEvent(new Event("Parent-login"));
 
     router.push("/");
+    toast.success("Login Successful!");
   } else {
     alert(data.message || data.error);
   }

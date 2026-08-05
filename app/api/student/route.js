@@ -81,7 +81,8 @@ const hashedPassword = await bcrypt.hash(password, 10);
       password:hashedPassword,
       photo: photoPath,
       class1,
-      section
+      section,
+  
     });
 
     return Response.json({
@@ -99,4 +100,41 @@ const hashedPassword = await bcrypt.hash(password, 10);
     { status: 500 }
   );
 }
+}
+
+
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return Response.json(
+        { message: "Student id is required" },
+        { status: 400 }
+      );
+    }
+
+    const student = await db
+      .select()
+      .from(Students)
+      .where(eq(Students.id, Number(id)));
+
+    if (student.length === 0) {
+      return Response.json(
+        { message: "Student Not Found" },
+        { status: 404 }
+      );
+    }
+
+    return Response.json(student[0]);
+  } catch (error) {
+    return Response.json(
+      {
+        message: error.message,
+      },
+      { status: 500 }
+    );
+  }
 }

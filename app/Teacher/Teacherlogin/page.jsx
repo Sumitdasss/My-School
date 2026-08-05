@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { User, Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 
 export default function StudentAuth() {
@@ -47,6 +48,7 @@ const handleSubmit = async (e) => {
     window.dispatchEvent(new Event("Teacher-login"));
 
     router.push("/");
+     toast.success("Login Successful!");
   } else {
     alert(data.message || data.error);
   }

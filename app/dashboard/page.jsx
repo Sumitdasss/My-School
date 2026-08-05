@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import toast from "react-hot-toast";
 
 
 // Next.js Link imported for Quick Actions
@@ -100,7 +100,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
 };
   // Management Handlers
   const addSubject = async () => {
-    if (!subjectName || !subjectClass) return alert("সব field পূরণ করো");
+    if (!subjectName || !subjectClass) return toast.error("সব field পূরণ করো");
     await fetch("/api/admin1/subjects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -128,7 +128,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
 
   const addExam = async () => {
     if (!examName || !examYear || !examClass || !examSection)
-      return alert("সব field পূরণ করো");
+      return toast.error("সব field পূরণ করো");
     await fetch("/api/admin1/exams", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -163,7 +163,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
 
   const addAssignment = async () => {
     if (!assignTeacherId || !assignSubjectId || !assignClass || !assignSection)
-      return alert("সব field পূরণ করো");
+      return toast.error("সব field পূরণ করো");
     await fetch("/api/admin1/assignments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -218,7 +218,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
 };
 const addResult = async () => {
   if (!resultStudentId || !resultExamId || !resultSubjectId || !resultMarks) {
-    return alert("সব field পূরণ করো");
+    return toast.error("সব field পূরণ করো");
   }
 
   try {
@@ -379,7 +379,7 @@ const handleImageChange = (e) => {
       return;
     }
 
-    alert("Notice Added Successfully");
+    toast.success("Notice Added Successfully");
 
     setdata({
       title: "",
@@ -396,7 +396,7 @@ const handleImageChange = (e) => {
     setisopen(false);
   } catch (err) {
     console.log(err);
-    alert("Something went wrong");
+    toast.error("Something went wrong");
   } finally {
     setLoading(false);
   }
@@ -453,19 +453,17 @@ const handelSubmit22=async(e)=>{
     const result = await res.json();
 
     if (!res.ok) {
-      alert(result.error || "Notice Add Failed");
+      toast.error(result.error || "Notice Add Failed");
       return;
     }
 
-    alert("Notice Added Successfully");
-
-
+    toast.success("Notice Added Successfully");
 
   
     
   } catch (err) {
   console.error(err);
-  alert("Something went wrong");
+  toast.error("Something went wrong");
 } finally {
     setLoading22(false);
   }
@@ -1372,22 +1370,442 @@ const handelSubmit22=async(e)=>{
 // 2. OTHER VIEW COMPONENTS
 // ---------------------------------------------------------------------------
 function Students() {
+
+const [students, setStudents] = useState([]);
+  const [roll, setRoll] = useState("");
+  const [class1, setClass1] = useState("");
+  const [section, setSection] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+const [classes, setClasses] = useState([]);
+const [sections, setSections] = useState([]);
+  const getStudents = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const params = new URLSearchParams();
+
+      if (roll.trim()) params.append("roll", roll.trim());
+      if (class1) params.append("class", class1);
+      if (section) params.append("section", section);
+
+
+
+
+
+
+
+      
+      const res = await fetch(`/api/Teacher/student?${params.toString()}`);
+
+      if (!res.ok) throw new Error("Failed to fetch students");
+
+      const data = await res.json();
+
+      setStudents(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load students.");
+      setStudents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getStudents();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roll, class1, section]);
+
+
+
+const getFilters = async () => {
+  const res = await fetch("/api/Teacher/student-filters");
+  const data = await res.json();
+
+  setClasses(data.classes);
+  setSections(data.sections);
+};
+
+useEffect(() => {
+  getFilters();
+}, []);
+
+
+
+
+ 
+  const [isopen, setisopen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+const handelopen = (student) => {
+  setSelectedStudent(student);
+  setisopen(true);
+};
+
+
+const handleClose = () => {
+  setisopen(false);
+  setSelectedStudent(null);
+};
+const deleteStudent = async (id) => {
+  const confirmDelete = window.confirm("আপনি কি Student-কে Delete করতে চান?");
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`/api/student/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Delete Failed");
+    }
+
+    toast.success(data.message || "Student Deleted Successfully");
+
+
+    getStudents();
+
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message);
+  }
+};
+
   return (
-    <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/70 p-10">
-      <div className="flex justify-between items-center mb-10">
-        <h2 className="text-4xl font-bold text-gray-900">All Students</h2>
-        <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-medium hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-3">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6">
+  <div className="max-w-7xl mx-auto">
+
+    {/* Header */}
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+          All Students
+        </h1>
+        <p className="text-gray-500 mt-1">
+          Manage and view all students
+        </p>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <div className="bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold shadow-sm">
+          Total Students : {students.length}
+        </div>
+
+        <button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2">
           + Add New Student
         </button>
       </div>
-      <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl h-96 flex items-center justify-center">
-        <p className="text-gray-400 text-lg">Student Management Table Here</p>
+    </div>
+
+    {/* Filters */}
+    <div className="bg-white relative rounded-2xl shadow-sm border border-gray-100 p-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <input
+          type="text"
+          placeholder="Search Roll..."
+          value={roll}
+          onChange={(e) => setRoll(e.target.value)}
+          className="border border-gray-200 rounded-xl p-3.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+        />
+
+        <select
+          value={class1}
+          onChange={(e) => setClass1(e.target.value)}
+          className="border border-gray-200 rounded-xl p-3.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white"
+        >
+          <option value="">All Class</option>
+          {classes.map((item) => (
+            <option key={item.class1} value={item.class1}>
+              Class {item.class1}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={section}
+          onChange={(e) => setSection(e.target.value)}
+          className="border border-gray-200 rounded-xl p-3.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white"
+        >
+          <option value="">All Section</option>
+          {sections.map((item) => (
+            <option key={item.section} value={item.section}>
+              Section {item.section}
+            </option>
+          ))}
+        </select>
+
+        <button
+          onClick={() => {
+            setRoll("");
+            setClass1("");
+            setSection("");
+          }}
+          className="bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all"
+        >
+          Reset Filter
+        </button>
       </div>
     </div>
+
+    {/* Loading */}
+    {loading && (
+      <div className="flex justify-center py-24">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )}
+
+    {/* Error */}
+    {!loading && error && (
+      <div className="text-center text-red-500 font-semibold py-16">
+        {error}
+      </div>
+    )}
+
+    {/* Empty State */}
+    {!loading && !error && students.length === 0 && (
+      <div className="text-center py-24 bg-white rounded-2xl border border-dashed border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-800">No Student Found</h2>
+        <p className="text-gray-500 mt-2">
+          Try changing Roll, Class or Section.
+        </p>
+      </div>
+    )}
+
+    {/* Student Cards */}
+    {!loading && !error && students.length > 0 && (
+     <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-lg">
+  <table className="w-full">
+    <tbody>
+      {students.map((student) => (
+        <tr
+          key={student.id}
+          className="border-b hover:bg-gray-50 transition"
+        >
+          {/* Profile */}
+          <td className="px-6 py-4">
+            <div className="flex items-center gap-4">
+              <img
+                src={student.photo || "/default-avatar.png"}
+                alt={student.fullName}
+                onError={(e) => {
+                  e.currentTarget.src = "/default-avatar.png";
+                }}
+                className="w-14 h-14 rounded-full object-cover border"
+              />
+
+              <div>
+                <h2 className="font-semibold text-gray-900">
+                  {student.fullName}
+                </h2>
+
+                <p className="text-sm text-gray-500">
+                  Roll : {student.rollNumber}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          {/* Class */}
+          <td className="px-6 py-4 text-gray-700">
+            {student.class1}
+          </td>
+
+          {/* Section */}
+          <td className="px-6 py-4 text-gray-700">
+            {student.section}
+          </td>
+
+          {/* Phone */}
+          <td className="px-6 py-4 text-gray-700">
+            {student.phone || "N/A"}
+          </td>
+
+          {/* Action */}
+          <td className="px-6 py-4">
+            <div className="flex justify-end gap-3">
+              <button
+              onClick={() => handelopen(student)}
+                className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition"
+              >
+                View
+              </button>
+
+              <button
+                onClick={() => deleteStudent(student.id)}
+                className="px-5 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition"
+              >
+                Remove
+              </button>
+
+
+            
+            </div>
+          </td>
+        </tr>
+
+
+
+
+
+
+      ))}
+    </tbody>
+  </table>
+ {isopen && selectedStudent && (
+  <div className="fixed inset-0 top-10 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-200">
+
+      {/* Close Button */}
+      <button
+        onClick={handleClose}
+        className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-lg font-bold transition-all z-10"
+      >
+        ✕
+      </button>
+
+      {/* Gradient Header + Photo */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-36 relative">
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+          <img
+            src={selectedStudent.photo || "/default-avatar.png"}
+            alt={selectedStudent.fullName}
+            onError={(e) => {
+              e.currentTarget.src = "/default-avatar.png";
+            }}
+            className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg bg-white"
+          />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="pt-20 pb-6 px-6 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          {selectedStudent.fullName}
+        </h1>
+        <p className="text-blue-600 font-medium mt-1 text-sm">
+          Student Profile
+        </p>
+
+        {/* Info Rows */}
+        <div className="mt-8 space-y-3 text-left">
+          {[
+            { label: "Roll Number", value: selectedStudent.rollNumber },
+            { label: "Class", value: selectedStudent.class1 },
+            { label: "Section", value: selectedStudent.section },
+            { label: "Phone", value: selectedStudent.phone || "N/A" },
+            { label: "Email", value: selectedStudent.email || "N/A" },
+            { label: "Father", value: selectedStudent.fatherName || "N/A" },
+            { label: "Mother", value: selectedStudent.motherName || "N/A" },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors"
+            >
+              <span className="text-gray-500 text-sm font-medium">{item.label}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right max-w-[60%] break-all">
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Button */}
+        <button
+          onClick={handleClose}
+          className="mt-8 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+        >
+          Close Profile
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+</div>
+    )}
+  </div>
+</div>
   );
 }
 
 function Teachers() {
+  const [teachers, setTeachers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getTeachers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch("/api/Teacher/Allteacher");
+      const data = await res.json();
+      setTeachers(data.data || []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load teachers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTeachers();
+  }, []); // empty dependency array → runs only once
+
+  const handleOpen = (teacher) => {
+   
+    console.log("View teacher:", teacher);
+  };
+
+ const deleteTeacher = async (id) => {
+  const confirmDelete = window.confirm("আপনি কি Teacher-কে Delete করতে চান?");
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`/api/Teacher/Allteacher/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Delete Failed");
+    }
+
+    toast.success(data.message || "Teacher Deleted Successfully");
+
+
+    getTeachers();
+
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message);
+  }
+};
+ const [isopen, setisopen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+const handleopen = (student) => {
+  setSelectedStudent(student);
+  setisopen(true);
+};
+
+
+const handleClose = () => {
+  setisopen(false);
+  setSelectedStudent(null);
+};
   return (
     <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/70 p-10">
       <div className="flex justify-between items-center mb-10">
@@ -1396,12 +1814,1000 @@ function Teachers() {
           + Add Teacher
         </button>
       </div>
-      <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl h-96 flex items-center justify-center">
-        <p className="text-gray-400 text-lg">Teachers Directory Here</p>
+
+      {loading && (
+        <div className="h-96 flex items-center justify-center text-gray-400 text-lg">
+          Loading teachers...
+        </div>
+      )}
+
+      {error && (
+        <div className="h-96 flex items-center justify-center text-red-500 text-lg">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && teachers.length === 0 && (
+        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl h-96 flex items-center justify-center">
+          <p className="text-gray-400 text-lg">No teachers found</p>
+        </div>
+      )}
+
+      {!loading && !error && teachers.length > 0 && (
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-lg">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 text-left text-sm text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4">Teacher</th>
+                <th className="px-6 py-4">Subject / Designation</th>
+                <th className="px-6 py-4">Phone</th>
+                <th className="px-6 py-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {teachers.map((teacher) => (
+                <tr
+                  key={teacher.id}
+                  className="border-b hover:bg-gray-50 transition"
+                >
+                  {/* Profile */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={teacher.photo || "/default-avatar.png"}
+                        alt={teacher.fullName || teacher.name}
+                        onError={(e) => {
+                          e.currentTarget.src = "/default-avatar.png";
+                        }}
+                        className="w-14 h-14 rounded-full object-cover border"
+                      />
+                      <div>
+                        <h2 className="font-semibold text-gray-900">
+                          {teacher.fullName || teacher.name}
+                        </h2>
+                        <p className="text-sm text-gray-500">
+                          ID : {teacher.employeeId || teacher.id}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Subject / Designation */}
+                  <td className="px-6 py-4 text-gray-700">
+                    {teacher.subject || teacher.designation || "N/A"}
+                  </td>
+
+                  {/* Phone */}
+                  <td className="px-6 py-4 text-gray-700">
+                    {teacher.phone || "N/A"}
+                  </td>
+
+                  {/* Action */}
+                  <td className="px-6 py-4">
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => handleopen(teacher)}
+                        className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => deleteTeacher(teacher.id)}
+                        className="px-5 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+
+
+
+
+            </tbody>
+          </table>
+{isopen && selectedStudent && (
+  <div className="fixed inset-0 top-10 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-200">
+
+      {/* Close Button */}
+      <button
+        onClick={handleClose}
+        className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-lg font-bold transition-all z-10"
+      >
+        ✕
+      </button>
+
+      {/* Gradient Header + Photo */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-36 relative">
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+          <img
+            src={selectedStudent.photo || "/default-avatar.png"}
+            alt={selectedStudent.fullName}
+            onError={(e) => {
+              e.currentTarget.src = "/default-avatar.png";
+            }}
+            className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg bg-white"
+          />
+        </div>
       </div>
+
+      {/* Content */}
+      <div className="pt-20 pb-6 px-6 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          {selectedStudent.fullName}
+        </h1>
+        <p className="text-blue-600 font-medium mt-1 text-sm">
+          Student Profile
+        </p>
+
+        {/* Info Rows */}
+        <div className="mt-8 space-y-3 text-left">
+          {[
+            { label: "Roll Number", value: selectedStudent.rollNumber },
+            { label: "Class", value: selectedStudent.class1 },
+            { label: "Section", value: selectedStudent.section },
+            { label: "Phone", value: selectedStudent.phone || "N/A" },
+            { label: "Email", value: selectedStudent.email || "N/A" },
+            { label: "Father", value: selectedStudent.fatherName || "N/A" },
+            { label: "Mother", value: selectedStudent.motherName || "N/A" },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors"
+            >
+              <span className="text-gray-500 text-sm font-medium">{item.label}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right max-w-[60%] break-all">
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Button */}
+        <button
+          onClick={handleClose}
+          className="mt-8 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+        >
+          Close Profile
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+        </div>
+      )}
     </div>
   );
 }
+function Parent() {
+  const [teachers, setTeachers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getTeachers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch("/api/ParentRegistar/Allparent");
+      const data = await res.json();
+      setTeachers(data.data || []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load parents");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTeachers();
+  }, []); // empty dependency array → runs only once
+
+  
+ const deleteParent = async (id) => {
+  const confirmDelete = window.confirm("আপনি কি Parent-কে Delete করতে চান?");
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`/api/ParentRegistar/Allparent/${id}`, {
+  method: "DELETE",
+});
+
+const data = await res.json();
+
+console.log("Status:", res.status);
+console.log("Response:", data);
+
+if (!res.ok) {
+  throw new Error(data.error || data.message || "Delete Failed");
+}
+    toast.success(data.message || "Parent Deleted Successfully");
+
+
+    getTeachers();
+
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message);
+  }
+};
+ const [isopen, setisopen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+const handleopen = (student) => {
+  setSelectedStudent(student);
+  setisopen(true);
+};
+
+
+const handleClose = () => {
+  setisopen(false);
+  setSelectedStudent(null);
+};
+  return (
+    <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/70 p-10">
+      <div className="flex justify-between items-center mb-10">
+        <h2 className="text-4xl font-bold text-gray-900">Teaching Faculty</h2>
+        <button className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-4 rounded-2xl font-medium hover:shadow-lg hover:shadow-emerald-500/30 transition-all flex items-center gap-3">
+          + Add Teacher
+        </button>
+      </div>
+
+      {loading && (
+        <div className="h-96 flex items-center justify-center text-gray-400 text-lg">
+          Loading teachers...
+        </div>
+      )}
+
+      {error && (
+        <div className="h-96 flex items-center justify-center text-red-500 text-lg">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && teachers.length === 0 && (
+        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl h-96 flex items-center justify-center">
+          <p className="text-gray-400 text-lg">No teachers found</p>
+        </div>
+      )}
+
+      {!loading && !error && teachers.length > 0 && (
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-lg">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 text-left text-sm text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4">Teacher</th>
+                <th className="px-6 py-4">Subject / Designation</th>
+                <th className="px-6 py-4">Phone</th>
+                <th className="px-6 py-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {teachers.map((teacher) => (
+                <tr
+                  key={teacher.id}
+                  className="border-b hover:bg-gray-50 transition"
+                >
+                  {/* Profile */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={teacher.photo || "/default-avatar.png"}
+                        alt={teacher.fullName || teacher.name}
+                        onError={(e) => {
+                          e.currentTarget.src = "/default-avatar.png";
+                        }}
+                        className="w-14 h-14 rounded-full object-cover border"
+                      />
+                      <div>
+                        <h2 className="font-semibold text-gray-900">
+                          {teacher.fullName || teacher.name}
+                        </h2>
+                        <p className="text-sm text-gray-500">
+                          ID : {teacher.employeeId || teacher.id}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Subject / Designation */}
+                  <td className="px-6 py-4 text-gray-700">
+                    {teacher.subject || teacher.designation || "N/A"}
+                  </td>
+
+                  {/* Phone */}
+                  <td className="px-6 py-4 text-gray-700">
+                    {teacher.phone || "N/A"}
+                  </td>
+
+                  {/* Action */}
+                  <td className="px-6 py-4">
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => handleopen(teacher)}
+                        className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => deleteParent(teacher.id)}
+                        className="px-5 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+
+
+
+
+            </tbody>
+          </table>
+{isopen && selectedStudent && (
+  <div className="fixed inset-0 top-10 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-200">
+
+      {/* Close Button */}
+      <button
+        onClick={handleClose}
+        className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-lg font-bold transition-all z-10"
+      >
+        ✕
+      </button>
+
+      {/* Gradient Header + Photo */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-36 relative">
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+          <img
+            src={selectedStudent.photo || "/default-avatar.png"}
+            alt={selectedStudent.fullName}
+            onError={(e) => {
+              e.currentTarget.src = "/default-avatar.png";
+            }}
+            className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg bg-white"
+          />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="pt-20 pb-6 px-6 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          {selectedStudent.fullName}
+        </h1>
+        <p className="text-blue-600 font-medium mt-1 text-sm">
+          Student Profile
+        </p>
+
+        {/* Info Rows */}
+        <div className="mt-8 space-y-3 text-left">
+          {[
+            { label: "Roll Number", value: selectedStudent.rollNumber },
+            { label: "Class", value: selectedStudent.class1 },
+            { label: "Section", value: selectedStudent.section },
+            { label: "Phone", value: selectedStudent.phone || "N/A" },
+            { label: "Email", value: selectedStudent.email || "N/A" },
+            { label: "Father", value: selectedStudent.fatherName || "N/A" },
+            { label: "Mother", value: selectedStudent.motherName || "N/A" },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors"
+            >
+              <span className="text-gray-500 text-sm font-medium">{item.label}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right max-w-[60%] break-all">
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Button */}
+        <button
+          onClick={handleClose}
+          className="mt-8 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+        >
+          Close Profile
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+
+
+
+ function FeesPage() {
+  const [fees, setFees] = useState([]);
+
+  const [formData, setFormData] = useState({
+    class1: "",
+    feeType: "",
+    amount: "",
+    description: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const loadFees = async () => {
+    try {
+      const res = await fetch("/api/Fees");
+      const data = await res.json();
+
+      if (data.success) {
+        setFees(data.fees);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    loadFees();
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const createFee = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/Fees", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("Fee Created Successfully");
+
+        setFormData({
+          class1: "",
+          feeType: "",
+          amount: "",
+          description: "",
+        });
+
+        loadFees();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+
+      <div className="max-w-6xl mx-auto">
+
+        <div className="bg-white rounded-xl shadow p-8">
+
+          <h1 className="text-3xl font-bold mb-8">
+            Fee Management
+          </h1>
+
+          <form
+            onSubmit={createFee}
+            className="grid md:grid-cols-2 gap-5"
+          >
+
+            <select
+              name="class1"
+              value={formData.class1}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
+              required
+            >
+              <option value="">Select Class</option>
+
+              <option value="6">Class 6</option>
+              <option value="7">Class 7</option>
+              <option value="8">Class 8</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+
+            </select>
+
+            <input
+              type="text"
+              name="feeType"
+              placeholder="Fee Type"
+              value={formData.feeType}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
+              required
+            />
+
+            <input
+              type="number"
+              name="amount"
+              placeholder="Amount"
+              value={formData.amount}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
+              required
+            />
+
+            <input
+              type="text"
+              name="description"
+              placeholder="Description"
+              value={formData.description}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
+            />
+
+            <button
+              disabled={loading}
+              className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
+            >
+              {loading ? "Saving..." : "Create Fee"}
+            </button>
+
+          </form>
+
+        </div>
+
+        <div className="bg-white rounded-xl shadow mt-10 overflow-hidden">
+
+          <table className="w-full">
+
+            <thead className="bg-gray-200">
+
+              <tr>
+
+                <th className="p-4">ID</th>
+
+                <th>Class</th>
+
+                <th>Fee Type</th>
+
+                <th>Amount</th>
+
+                <th>Description</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {fees.map((fee) => (
+
+                <tr
+                  key={fee.id}
+                  className="border-b text-center"
+                >
+
+                  <td className="p-4">
+                    {fee.id}
+                  </td>
+
+                  <td>
+                    {fee.class1}
+                  </td>
+
+                  <td>
+                    {fee.feeType}
+                  </td>
+
+                  <td>
+                    ৳ {fee.amount}
+                  </td>
+
+                  <td>
+                    {fee.description}
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
+
+
+
+
+
+
+ function AdmitCardPage() {
+
+  const [roll, setRoll] = useState("");
+const [admitCards, setAdmitCards] = useState([]);
+  const [student, setStudent] = useState(null);
+
+
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    examName: "SSC Examination",
+    examYear: 2026,
+    center: "",
+    examDate: "",
+    examTime: "",
+    room: "",
+    seatNo: "",
+  });
+
+
+  // Search Student
+  const searchStudent = async () => {
+
+  if(!roll){
+    toast.error("Enter Roll Number");
+    return;
+  }
+
+  try{
+
+    const res = await fetch(
+      `/api/student/Admidcard?roll=${roll}`
+    );
+
+    const data = await res.json();
+
+if (data.success) {
+  setStudent(data.student);
+  setAdmitCards(data.admitCards || []);
+
+  setFormData((prev) => ({
+  ...prev,
+  center: "Goalkhali Ideal High School",
+}));
+}
+    else{
+
+      toast.error(data.message);
+
+      setStudent(null);
+      setAdmitCards([]);
+
+    }
+
+
+  }
+  catch(error){
+
+    console.log(error);
+
+  }
+
+};
+  const handleChange=(e)=>{
+
+    setFormData({
+
+      ...formData,
+      [e.target.name]:e.target.value
+
+    });
+
+  };
+
+
+
+
+  // Generate Admit Card
+
+  const generateAdmit = async()=>{
+
+
+    if(!student){
+
+      toast.error("Search Student First");
+      return;
+
+    }
+
+
+    try{
+
+
+      const res = await fetch("/api/student/Admidcard",{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          studentId:student.id,
+
+          ...formData
+
+        })
+
+      });
+
+
+      const data = await res.json();
+
+if (data.success) {
+  toast.success("Admit Card Added Successfully");
+
+  loadAdmitCards();
+}
+      else{
+
+        toast.error(data.message);
+
+      }
+
+
+    }
+    catch(error){
+
+      console.log(error);
+
+    }
+
+
+  };
+
+const loadAdmitCards = async () => {
+  try {
+    const res = await fetch("/api/student/Admidcard");
+    const data = await res.json();
+
+    if (data.success) {
+      setAdmitCards(data.admitCards);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+useEffect(() => {
+  loadAdmitCards();
+}, []);
+
+const deleteAdmitCard = async (id) => {
+  const res = await fetch(`/api/student/Admidcard?id=${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    toast.success("Admit Card Deleted Successfully");
+    loadAdmitCards();
+  } else {
+    toast.error(data.message);
+  }
+};
+
+
+return (
+
+<div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-10 px-4">
+      <div className="max-w-300 mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold text-slate-800">Generate Admit Card</h1>
+          <p className="text-slate-500 mt-2">Search student → Fill exam details → Generate</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+          {/* Search */}
+          <div className="bg-slate-50 px-6 py-5 border-b">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="number"
+                placeholder="Enter Roll Number"
+                value={roll}
+                onChange={(e) => setRoll(e.target.value)}
+                className="flex-1 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={searchStudent}
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-xl transition disabled:opacity-60"
+              >
+                {loading ? "Searching..." : "Search Student"}
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6 md:p-8 space-y-8">
+            {/* Student Info */}
+            {student && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                <h2 className="text-lg font-semibold text-slate-800 mb-5">Student Information</h2>
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <div>
+                    {student.photo ? (
+                      <img
+                        src={student.photo}
+                        alt="Student"
+                        className="w-28 h-28 object-cover rounded-xl border-4 border-white shadow"
+                      />
+                    ) : (
+                      <div className="w-28 h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-500">
+                        Photo
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-1.5 text-slate-700">
+                    <p><span className="font-medium">Name:</span> {student.fullName}</p>
+                    <p><span className="font-medium">Father:</span> {student.fatherName}</p>
+                    <p><span className="font-medium">Mother:</span> {student.motherName}</p>
+                    <p><span className="font-medium">Roll:</span> {student.rollNumber}</p>
+                    <p><span className="font-medium">Class:</span> {student.class1}</p>
+                    <p><span className="font-medium">Section:</span> {student.section}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Exam Form */}
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800 mb-5">Exam Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="examName"
+                  value={formData.examName}
+                  onChange={handleChange}
+                  placeholder="Exam Name"
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  name="examYear"
+                  value={formData.examYear}
+                  onChange={handleChange}
+                  placeholder="Exam Year"
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  name="center"
+                  value={formData.center}
+                  onChange={handleChange}
+                  placeholder="Exam Center"
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="date"
+                  name="examDate"
+                  value={formData.examDate}
+                  onChange={handleChange}
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  name="examTime"
+                  value={formData.examTime}
+                  onChange={handleChange}
+                  placeholder="Exam Time (e.g. 10:00 AM)"
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  name="room"
+                  value={formData.room}
+                  onChange={handleChange}
+                  placeholder="Room Number"
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  name="seatNo"
+                  value={formData.seatNo}
+                  onChange={handleChange}
+                  placeholder="Seat Number"
+                  className="border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <button
+                onClick={generateAdmit}
+                className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3.5 rounded-xl text-lg transition"
+              >
+                Generate Admit Card
+              </button>
+            </div>
+
+            {/* Generated Cards Table */}
+            {admitCards.length > 0 && (
+              <div>
+                <h2 className="text-xl font-bold text-slate-800 mb-4">Generated Admit Cards</h2>
+                <div className="overflow-x-auto rounded-xl border border-slate-200">
+                  <table className="w-full text-sm">
+                    <thead className="bg-slate-100 text-slate-700">
+                      <tr>
+                        <th className="px-4 py-3 text-left">Photo</th>
+                        <th className="px-4 py-3 text-left">Name</th>
+                        <th className="px-4 py-3 text-left">Roll</th>
+                        <th className="px-4 py-3 text-left">Exam Name</th>
+                        <th className="px-4 py-3 text-left">Date</th>
+                        <th className="px-4 py-3 text-left">Room</th>
+                        <th className="px-4 py-3 text-left">Seat</th>
+                       <th className="px-4 py-3 text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {admitCards.map((item) => (
+                        <tr key={item.id} className="border-t hover:bg-slate-50">
+                          <td className="px-4 py-3">
+                            {item.photo ? (
+                              <img
+                                src={item.photo}
+                                alt=""
+                                className="w-10 h-10 rounded-lg object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-slate-200 rounded-lg"></div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 font-medium">{item.fullName}</td>
+                          <td className="px-4 py-3">{item.rollNumber}</td>
+                          <td className="px-4 py-3">{item.examName}</td>
+                          <td className="px-4 py-3">{item.examDate}</td>
+                          <td className="px-4 py-3">{item.room}</td>
+                          <td className="px-4 py-3">{item.seatNo}</td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => deleteAdmitCard(item.id)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+);
+
+
+}
+
+
+
+
 
 // ---------------------------------------------------------------------------
 // 3. MAIN WRAPPER PAGE (DEFAULT EXPORT)
@@ -1529,6 +2935,48 @@ export default function AdminPanel() {
               </div>
               {page === "teachers" && <ChevronRight size={22} />}
             </button>
+            <button
+              onClick={() => setPage("parent")}
+              className={`w-full flex items-center justify-between px-6 py-5 rounded-3xl text-lg font-medium transition-all ${
+                page === "parent"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <UserCheck size={26} />
+                Parents
+              </div>
+              {page === "parent" && <ChevronRight size={22} />}
+            </button>
+            <button
+              onClick={() => setPage("FeesPage")}
+              className={`w-full flex items-center justify-between px-6 py-5 rounded-3xl text-lg font-medium transition-all ${
+                page === "FeesPage"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <UserCheck size={26} />
+                Fees
+              </div>
+              {page === "FeesPage" && <ChevronRight size={22} />}
+            </button>
+            <button
+              onClick={() => setPage("AdmitCardPage")}
+              className={`w-full flex items-center justify-between px-6 py-5 rounded-3xl text-lg font-medium transition-all ${
+                page === "AdmitCardPage"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <UserCheck size={26} />
+                Admit Cards
+              </div>
+              {page === "AdmitCardPage" && <ChevronRight size={22} />}
+            </button>
           </nav>
 
           <button
@@ -1548,6 +2996,9 @@ export default function AdminPanel() {
           {page === "dashboard" && <IntegratedAdminDashboard />}
           {page === "students" && <Students />}
           {page === "teachers" && <Teachers />}
+          {page === "parent" && <Parent />}
+          {page === "FeesPage" && <FeesPage />}
+          {page === "AdmitCardPage" && <AdmitCardPage />}
         </main>
       </div>
     </div>

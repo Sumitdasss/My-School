@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { User, Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+
 export default function StudentAuth() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -37,14 +39,30 @@ const handleSubmit = async (e) => {
 
  const data = await res.json();
 
+
+
  if (res.ok) {
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("student", JSON.stringify(data.Studentall));
+ toast.success("Login Successful!");
+  localStorage.setItem("token", data.token);
 
-    window.dispatchEvent(new Event("student-login"));
+  localStorage.setItem(
+    "student",
+    JSON.stringify(data.Studentall)
+  );
 
-    router.push("/");
-  } else {
+  localStorage.setItem(
+    "studentId",
+    data.Studentall.id
+  );
+
+
+  window.dispatchEvent(new Event("student-login"));
+
+  router.push("/");
+
+
+
+} else {
     alert(data.message || data.error);
   }
 

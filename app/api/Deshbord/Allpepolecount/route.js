@@ -59,18 +59,36 @@ export async function GET() {
         )
       );
 
-    const studentGrowth =
-      previousStudents.length === 0? 100: (((currentStudents.length  - previousStudents.length ) / previousStudents.length ) *100 ).toFixed(1);
-    const ParentGrowth =
-      previousPrent.length === 0
-        ? 100
-        : (
-            ((currentParent.length  - previousPrent.length ) /
-              previousPrent.length ) *
+const difference = currentStudents.length - previousStudents.length;
+
+const studentGrowth =
+  previousStudents.length === 0
+    ? "0.0"
+    : Math.min(
+        difference * 2,
+        Number(
+          (
+            ((currentStudents.length - previousStudents.length) /
+              previousStudents.length) *
             100
-          ).toFixed(1);
+          ).toFixed(1)
+        )
+      );
+    const parentDifference = currentParent.length - previousPrent.length;
 
-
+const ParentGrowth =
+  previousPrent.length === 0
+    ? "0.0"
+    : Math.min(
+        parentDifference * 2,
+        Number(
+          (
+            ((currentParent.length - previousPrent.length) /
+              previousPrent.length) *
+            100
+          ).toFixed(1)
+        )
+      );
 let teacherStatus = "";
 
 if (teachers.length >= 1 && teachers.length <= 10) {

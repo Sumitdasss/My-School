@@ -293,3 +293,94 @@ export const RoutinePeriod = pgTable("RoutinePeriod", {
 
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const OTP = pgTable("OTP", {
+  id: serial("id").primaryKey(),
+
+  email: varchar("email", { length: 255 }).notNull(),
+
+  otp: varchar("otp", { length: 6 }).notNull(),
+
+  expiresAt: timestamp("expires_at").notNull(),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const Payments = pgTable("Payments", {
+  id: serial("id").primaryKey(),
+
+  studentId: integer("student_id")
+    .notNull()
+    .references(() => Students.id, { onDelete: "cascade" }),
+
+  parentId: integer("parent_id").references(() => Parent.id),
+
+  amount: integer("amount").notNull(),
+
+  feeType: varchar("fee_type", { length: 100 }).notNull(),
+
+  paymentMethod: varchar("payment_method", { length: 50 }).default("SSLCommerz"),
+
+  transactionId: varchar("transaction_id", { length: 255 }).unique(),
+
+  status: varchar("status", { length: 20 }).default("Pending"),
+
+  paymentDate: timestamp("payment_date").defaultNow(),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const PaymentItems = pgTable("PaymentItems", {
+  id: serial("id").primaryKey(),
+
+  paymentId: integer("payment_id")
+    .notNull()
+    .references(() => Payments.id, { onDelete: "cascade" }),
+
+  title: varchar("title", { length: 100 }).notNull(),
+
+  amount: integer("amount").notNull(),
+});
+
+export const Fees = pgTable("Fees", {
+
+  id: serial("id").primaryKey(),
+
+  class1: varchar("class", { length: 20 }).notNull(),
+
+  feeType: varchar("fee_type", { length: 100 }).notNull(),
+
+  amount: integer("amount").notNull(),
+
+  description: text("description"),
+
+  isActive: boolean("is_active").default(true),
+
+  createdAt: timestamp("created_at").defaultNow(),
+
+});
+export const AdmitCards = pgTable("AdmitCards", {
+  id: serial("id").primaryKey(),
+
+  studentId: integer("student_id")
+    .references(() => Students.id)
+    .notNull(),
+
+  examName: varchar("exam_name", { length: 100 }).notNull(),
+
+  examYear: integer("exam_year").notNull(),
+
+  center: varchar("center", { length: 255 }).notNull(),
+
+  examDate: date("exam_date").notNull(),
+
+  examTime: varchar("exam_time", { length: 50 }).notNull(),
+
+  room: varchar("room", { length: 50 }).notNull(),
+
+  seatNo: varchar("seat_no", { length: 50 }).notNull(),
+
+  status: boolean("status").default(true),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});

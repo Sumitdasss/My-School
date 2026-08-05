@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
@@ -84,74 +85,74 @@ export default function Navbar() {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
   const router =useRouter()
-const [user, setUser] = useState(null);
+// const [user, setUser] = useState(null);
 
 
-useEffect(() => {
+// useEffect(() => {
 
-  const loadUser = () => {
+//   const loadUser = () => {
 
-    const student1 = localStorage.getItem("student");
-    const parent = localStorage.getItem("Parent");
-    const teacher = localStorage.getItem("Teacher");
-
-
-    try {
-
-      if (student1 && student1 !== "undefined") {
-
-        setUser(JSON.parse(student1));
-
-      } 
-      else if (parent && parent !== "undefined") {
-
-        setUser(JSON.parse(parent));
-
-      } 
-      else if (teacher && teacher !== "undefined") {
-
-        setUser(JSON.parse(teacher));
-
-      } 
-      else {
-
-        setUser(null);
-
-      }
-
-    } catch(error) {
-
-      console.log("JSON Parse Error:", error);
-
-      localStorage.removeItem("student");
-      localStorage.removeItem("Parent");
-      localStorage.removeItem("Teacher");
-
-      setUser(null);
-    }
-
-  };
+//     const student1 = localStorage.getItem("student");
+//     const parent = localStorage.getItem("Parent");
+//     const teacher = localStorage.getItem("Teacher");
 
 
-  loadUser();
+//     try {
 
-  window.addEventListener("student-login", loadUser);
-  window.addEventListener("Parent-login", loadUser);
-  window.addEventListener("Teacher-login", loadUser);
+//       if (student1 && student1 !== "undefined") {
+
+//         setUser(JSON.parse(student1));
+
+//       } 
+//       else if (parent && parent !== "undefined") {
+
+//         setUser(JSON.parse(parent));
+
+//       } 
+//       else if (teacher && teacher !== "undefined") {
+
+//         setUser(JSON.parse(teacher));
+
+//       } 
+//       else {
+
+//         setUser(null);
+
+//       }
+
+//     } catch(error) {
+
+//       console.log("JSON Parse Error:", error);
+
+//       localStorage.removeItem("student");
+//       localStorage.removeItem("Parent");
+//       localStorage.removeItem("Teacher");
+
+//       setUser(null);
+//     }
+
+//   };
 
 
-  return () => {
-    window.removeEventListener("student-login", loadUser);
-    window.removeEventListener("Parent-login", loadUser);
-    window.removeEventListener("Teacher-login", loadUser);
-  };
+//   loadUser();
 
-}, []);
+//   window.addEventListener("student-login", loadUser);
+//   window.addEventListener("Parent-login", loadUser);
+//   window.addEventListener("Teacher-login", loadUser);
+
+
+//   return () => {
+//     window.removeEventListener("student-login", loadUser);
+//     window.removeEventListener("Parent-login", loadUser);
+//     window.removeEventListener("Teacher-login", loadUser);
+//   };
+
+// }, []);
 
 
  
 
-console.log(user);
+// console.log(user);
 
 const handleLogout = () => {
   localStorage.removeItem("student");
@@ -160,8 +161,106 @@ const handleLogout = () => {
 
   window.dispatchEvent(new Event("student-login"));
 
+  if (role === "student") {
   router.push("/Studentlogin");
+} else if (role === "parent") {
+  router.push("/Preant");
+} else if (role === "Teacher") {
+  router.push("/Teacher/Teacherlogin");
+}
 };
+
+
+ const [userData, setUserData] = useState(null);
+ const [role, setRole] = useState(null);
+
+
+useEffect(() => {
+
+  const loadUser = async () => {
+
+    try {
+
+      const student = JSON.parse(localStorage.getItem("student"));
+      const parent = JSON.parse(localStorage.getItem("Parent"));
+      const teacher = JSON.parse(localStorage.getItem("Teacher"));
+
+
+     
+
+
+      if(student?.id){
+
+        const res = await fetch(`/api/student?id=${student.id}`);
+        const data = await res.json();
+
+     
+
+        setUserData(data);
+        setRole("student")
+
+      }
+
+    else if(parent?.id){
+
+  const res = await fetch(`/api/ParentRegistar/${parent.id}`);
+  const data = await res.json();
+
+  console.log("Parent API:", data);
+
+  setUserData(data);
+  setRole("parent");
+
+}
+      else if(teacher?.id){
+
+        const res = await fetch(`/api/Teacher/${teacher.id}`);
+        const data = await res.json();
+
+        console.log("Teacher API:", data);
+
+        setUserData(data);
+        setRole("Teacher")
+
+      }
+
+      else{
+
+        setUserData(null);
+
+      }
+
+
+    } catch(error){
+
+      console.log(error);
+
+    }
+
+  };
+
+
+  loadUser();
+
+
+  window.addEventListener("student-login", loadUser);
+  window.addEventListener("Parent-login", loadUser);
+  window.addEventListener("Teacher-login", loadUser);
+  window.addEventListener("logout", loadUser);
+
+
+  return()=>{
+
+    window.removeEventListener("student-login", loadUser);
+    window.removeEventListener("Parent-login", loadUser);
+    window.removeEventListener("Teacher-login", loadUser);
+    window.removeEventListener("logout", loadUser);
+
+  }
+
+
+}, []);
+
 
 
   return (
@@ -240,19 +339,19 @@ const handleLogout = () => {
             {/* Desktop Portals */}
 
 
-            {user ?(
+            {userData ?(
          
   <div className="hidden xl:block relative group/profile">
     <button className="flex items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
 
       <img
-         src={user?.photo || "/default-user.png"}
-         alt={user?.fullName || "User"}
+         src={userData?.photo || "/default-user.png"}
+         alt={userData?.fullName || "User"}
         className="w-10 h-10 rounded-full object-cover border-2 border-white"
       />
 
       <span className="font-semibold text-[#081527]">
-        {user.fullName}
+        {userData.fullName}
       </span>
 
       <ChevronDown
@@ -260,7 +359,7 @@ const handleLogout = () => {
         className="group-hover/profile:rotate-180 transition-transform"
       />
     </button>
-{localStorage.getItem("student")&&(<>
+{ role==="student" &&(<>
 
 
 
@@ -269,45 +368,51 @@ const handleLogout = () => {
 }
     <div className="absolute right-0 mt-2 w-60 rounded-xl bg-white shadow-xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all">
 
-    {localStorage.getItem("student") && (
+    {role==="student" && (
   <>
     <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
       My Profile
     </Link>
 
-    <Link href="/student/result" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
       My Result
     </Link>
+    <Link href="/Studentlogin/Payment" className="block px-4 py-3 hover:bg-gray-100">
+     Pay Fees
+    </Link>
 
-    <Link href="/student/admit-card" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/admit-card" className="block px-4 py-3 hover:bg-gray-100">
       Admit Card
     </Link>
   </>
 )}
 
-{localStorage.getItem("Parent") && (
+{role==="parent" && (
   <>
-    <Link href="/Parentlogin/ParentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
       My Profile
     </Link>
+     <Link href="/Preant/add-child" className="block px-4 py-3 hover:bg-gray-100">
+      Add Child Profile
+    </Link>
 
-    <Link href="/ChildrenPage" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Preant/MyStudent" className="block px-4 py-3 hover:bg-gray-100">
       Child Profile
     </Link>
 
-    <Link href="/Parent/ChildResult" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
       Child Result
     </Link>
 
-    <Link href="/Parent/Attendance" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Preant/Childaddendence" className="block px-4 py-3 hover:bg-gray-100">
       Attendance
     </Link>
   </>
 )}
 
-{localStorage.getItem("Teacher") && (
+{role==="Teacher" && (
   <>
-    <Link href="/Teacher/TeacherProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
       My Profile
     </Link>
 
@@ -468,19 +573,19 @@ const handleLogout = () => {
 
 
 
-          {user ?(<>
+          {userData ?(<>
 
          <div className="md:hidden mt-10  relative ">
-    <button onClick={handel} className="flex w-full items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
+    <button   onClick={handel}  className="flex w-full items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
 
       <img
-         src={user?.photo || "/default-user.png"}
-         alt={user?.fullName || "User"}
+         src={userData?.photo || "/default-user.png"}
+         alt={userData?.fullName || "User"}
         className="w-10 h-10 rounded-full object-cover border-2 border-white"
       />
 
       <span className="font-semibold text-[#081527]">
-        {user.fullName}
+        {userData.fullName}
       </span>
 
       <ChevronDown
@@ -489,37 +594,81 @@ const handleLogout = () => {
       />
     </button>
 
-    <div className={`absolute ${scrolled2?"max-h-80":"max-h-0"} duration-300  overflow-hidden left-0 mt-2 w-60 rounded-xl bg-white shadow-xl  transition-all`}>
+    { role==="student" &&(<>
 
-      <Link
-      onClick={()=>setIsOpen(false)}
-        href="/Studentlogin/StudentProfile"
-        className="block px-4 py-3 hover:bg-gray-100"
-      >
-        My Profile
-      </Link>
 
-      <Link
-        onClick={()=>setIsOpen(false)}
-        href="/student/result"
-        className="block px-4 py-3 hover:bg-gray-100"
-      >
-        My Result
-      </Link>
 
-      <Link
-        onClick={()=>setIsOpen(false)}
-        href="/student/admit-card"
-        className="block px-4 py-3 hover:bg-gray-100"
-      >
-        Admit Card
-      </Link>
+</>)
+
+}
+    <div  className={`mt-2 overflow-hidden transition-all duration-300 ${
+    scrolled2 ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible"
+  } bg-white rounded-xl shadow-xl`}>
+
+    {role==="student" && (
+  <>
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+      My Profile
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
+      My Result
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/admit-card" className="block px-4 py-3 hover:bg-gray-100">
+      Admit Card
+    </Link>
+  </>
+)}
+
+{role==="parent" && (
+  <>
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+      My Profile
+    </Link>
+     <Link   onClick={() => setIsOpen(false)} href="/Preant/add-child" className="block px-4 py-3 hover:bg-gray-100">
+      Add Child Profile
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/Preant/MyStudent" className="block px-4 py-3 hover:bg-gray-100">
+      Child Profile
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
+      Child Result
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/Preant/Childaddendence" className="block px-4 py-3 hover:bg-gray-100">
+      Attendance
+    </Link>
+  </>
+)}
+
+{role==="Teacher" && (
+  <>
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+      My Profile
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/AllStudent" className="block px-4 py-3 hover:bg-gray-100">
+      Students
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
+      Attendance
+    </Link>
+
+    <Link   onClick={() => setIsOpen(false)} href="/Teacher/Result" className="block px-4 py-3 hover:bg-gray-100">
+      Manage Result
+    </Link>
+  </>
+)}
+
+
 
       <button
-onClick={() => {
-  handleLogout();
-  setIsOpen(false);
-}}
+onClick={handleLogout
+}
         
         className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
       >

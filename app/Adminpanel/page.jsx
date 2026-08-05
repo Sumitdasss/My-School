@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState } from "react";
 import { Shield, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
 export default function AdminLogin() {
   const router = useRouter();
 
@@ -39,6 +40,7 @@ export default function AdminLogin() {
       const data = await res.json();
 
       if (res.ok) {
+        toast.success("Login Successful!");
         localStorage.setItem("token", data.token);
         localStorage.setItem("admin", JSON.stringify(data.admin));
 
@@ -46,10 +48,10 @@ export default function AdminLogin() {
 
         router.push("/dashboard");
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (err) {
-      alert("Server Error");
+      toast.error("Server Error");
     } finally {
       setLoading(false);
     }
