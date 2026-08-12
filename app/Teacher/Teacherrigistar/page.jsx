@@ -60,7 +60,7 @@ export default function StudentRegister() {
         data.append("photo", imageFile);
       }
 
-      const res = await fetch("/api/Teacher/Teacherrigister", {
+      const res = await fetch("http://localhost:5000/api/TeacherRegistar/Teacherregister123", {
         method: "POST",
         body: data,
       });

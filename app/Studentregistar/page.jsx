@@ -23,7 +23,7 @@ export default function StudentRegister() {
     rollNumber:"",
     confirmPassword: "",
     section:"",
-class:""
+class111:""
   
   
   });
@@ -63,7 +63,7 @@ class:""
     data.append("email", formData.email);
     data.append("password", formData.password);
     data.append("rollNumber", formData.rollNumber);
-    data.append("class", formData.class);
+    data.append("class11", formData.class111);
     data.append("section", formData.section);
    
 
@@ -72,13 +72,13 @@ class:""
       data.append("photo", imageFile);
     }
 
-    const res = await fetch("/api/student", {
+    const res = await fetch("http://localhost:5000/api/student/register", {
       method: "POST",
       body: data,
     });
 
     const result = await res.json();
-    
+    console.log(result);
     if (!res.ok) {
       alert(result.error || "Registration Failed");
       return;
@@ -236,8 +236,8 @@ class:""
                   <Phone className="absolute left-5 top-4 text-slate-400" />
                   <input
                     type="text"
-                    name="class"
-                    value={formData.class}
+                    name="class111"
+                    value={formData.class111}
                     onChange={handleChange}
                     required
                     className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"

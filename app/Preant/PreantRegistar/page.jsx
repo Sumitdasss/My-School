@@ -69,10 +69,10 @@ export default function ParentRegister() {
       data.append("photo", imageFile);
     }
 
-    const res = await fetch("/api/ParentRegistar", {
-      method: "POST",
-      body: data,
-    });
+    const res = await fetch("http://localhost:5000/api/ParentRegistar/Parentregister123", {
+  method: "POST",
+  body: data,
+});
 
     const result = await res.json();
      console.log(result);

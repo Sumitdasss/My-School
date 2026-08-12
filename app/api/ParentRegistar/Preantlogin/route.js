@@ -21,8 +21,7 @@ export async function POST(req) {
         { status: 404 }
       );
     }
-console.log(Parent11);
-console.log(email);
+
     const Parentall = Parent11[0];
 
     const match = await bcrypt.compare(password, Parentall.password);

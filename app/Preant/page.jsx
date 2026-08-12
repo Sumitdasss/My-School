@@ -3,146 +3,1214 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { User, Lock, Eye, EyeOff, Users } from "lucide-react";
+import {
+  User,
+  Lock,
+  Mail,
+  Phone,
+  Eye,
+  EyeOff,
+  Upload,
+  Users,
+  Camera,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-export default function ParentLogin() {
+import toast from "react-hot-toast";
+
+export default function ParentAuth() {
+  /* ================= LOGIN / REGISTER ================= */
+
+  const [isLogin, setIsLogin] = useState(true);
+
   const [showPassword, setShowPassword] = useState(false);
+
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
+
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const [imageFile, setImageFile] = useState(null);
+
+  /* ================= LOGIN DATA ================= */
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  /* ================= REGISTER DATA ================= */
+
+  const [registerData, setRegisterData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    childName: "",
+    childClass: "",
+    childEmail: "",
+    childRoll: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const router = useRouter();
+
+  /* ================= LOGIN CHANGE ================= */
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-    const router = useRouter();
-  
+  /* ================= REGISTER CHANGE ================= */
+
+  const handleRegisterChange = (e) => {
+    setRegisterData({
+      ...registerData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  /* ================= LOGIN ================= */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const res = await fetch("/api/ParentRegistar/Preantlogin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: formData.email,
-      password: formData.password,
-    }),
-  });
-  
-   const data = await res.json();
-   console.log(data);
-  
-  if (res.ok) {
-    localStorage.setItem("token", data.token);
-localStorage.setItem("Parent", JSON.stringify(data.Parentall));
-localStorage.setItem("students", JSON.stringify(data.students));
-    window.dispatchEvent(new Event("Parent-login"));
 
-    router.push("/");
-    toast.success("Login Successful!");
-  } else {
-    alert(data.message || data.error);
-  }
+    const res = await fetch("http://localhost:5000/api/auth/Parent-login", {
+      method: "POST",
 
-  
-  
-  
-  
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        email: formData.email,
+
+        password: formData.password,
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+
+      localStorage.setItem("Parent", JSON.stringify(data.Parentall));
+
+      localStorage.setItem("students", JSON.stringify(data.students));
+
+      window.dispatchEvent(new Event("Parent-login"));
+
+      toast.success("Login Successful!");
+
+      router.push("/");
+    } else {
+      toast.error(data.message || data.error || "Login Failed");
+    }
   };
+
+  /* ================= IMAGE ================= */
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setImageFile(file);
+
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  /* ================= REGISTER ================= */
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+
+    if (registerData.password !== registerData.confirmPassword) {
+      toast.error("Passwords do not match!");
+
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+
+      /* TEXT FIELDS */
+
+      data.append("fullName", registerData.fullName);
+      data.append("email", registerData.email);
+      data.append("phone", registerData.phone);
+      data.append("childName", registerData.childName);
+      data.append("childClass", registerData.childClass);
+      data.append("childRoll", registerData.childRoll);
+      data.append("password", registerData.password);
+      data.append("childEmail", registerData.childEmail);
+
+      /* IMAGE */
+
+      if (imageFile) {
+        data.append("photo", imageFile);
+      }
+
+      const res = await fetch(
+        "http://localhost:5000/api/ParentRegistar/Parentregister123",
+        {
+          method: "POST",
+          body: data,
+        },
+      );
+
+      const result = await res.json();
+
+      console.log(result);
+
+      if (!res.ok) {
+        toast.error(result.error || "Registration Failed");
+
+        return;
+      }
+
+      toast.success("Registration Successful!");
+
+      /*
+          Register → Login flip হবে।
+        */
+
+      setIsLogin(true);
+
+      /* REGISTER FORM CLEAR */
+
+      setRegisterData({
+        fullName: "",
+        email: "",
+        phone: "",
+        childName: "",
+        childClass: "",
+        childEmail: "",
+        childRoll: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      setImageFile(null);
+
+      setImagePreview(null);
+    } catch (err) {
+      console.error(err);
+
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] to-[#1A365D] flex items-center justify-center p-5">
-      <div className="max-w-360 w-full grid md:grid-cols-2 gap-12 items-center">
-        
-        {/* Left Side - Image */}
-        <div className="hidden md:flex flex-col justify-center">
+    <div
+      className="
+      min-h-screen
+      bg-gradient-to-br
+      from-[#0A1628]
+      to-[#1A365D]
+      flex
+      items-center
+      justify-center
+      p-5
+    "
+    >
+      <div
+        className="
+        max-w-5xl
+        w-full
+        pt-25
+        grid
+        md:grid-cols-2
+        gap-12
+        items-center
+      "
+      >
+        {/* =================================================
+            LEFT SIDE
+        ================================================= */}
+
+        <div
+          className="
+          hidden
+          md:flex
+          flex-col
+          justify-center
+        "
+        >
           <div className="relative">
-            <img 
-              src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg" 
-              alt="School Campus" 
-              className="rounded-3xl shadow-2xl object-cover w-full h-[620px]" 
+            <img
+              src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"
+              alt="School Campus"
+              className="
+                rounded-3xl
+                shadow-2xl
+                object-cover
+                w-full
+                h-[620px]
+              "
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0A1628]/70 to-transparent rounded-3xl" />
+
+            <div
+              className="
+              absolute
+              inset-0
+              bg-gradient-to-br
+              from-[#0A1628]/70
+              to-transparent
+              rounded-3xl
+            "
+            />
           </div>
-          
-        
         </div>
 
-        {/* Login Form */}
-        <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-10 md:p-14 shadow-2xl">
-          <div className="text-center mb-10">
-            <div className="mx-auto w-20 h-20 bg-[#D4AF37] rounded-3xl flex items-center justify-center mb-6">
-              <Users className="text-[#0A1628]" size={40} />
-            </div>
-            <h2 className="text-4xl font-serif font-bold text-white">Parent Login</h2>
-            <p className="text-slate-300 mt-3">Access your child's progress</p>
-          </div>
+        {/* =================================================
+            RIGHT SIDE - FLIP AREA
+        ================================================= */}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div>
-              <label className="block text-sm text-slate-300 mb-3">Email or Phone Number</label>
-              <div className="relative">
-                <User className="absolute left-5 top-4 text-slate-400" />
-                <input
-                  type="text"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white placeholder:text-slate-400"
-                  placeholder="parent@email.com or 017XX-XXXXXX"
-                />
+        <div
+          className="
+            relative
+            w-full
+          "
+          style={{
+            perspective: "1500px",
+          }}
+        >
+          {/* ================= FLIP CARD ================= */}
+
+          <div
+            className={`
+              relative
+              w-full
+              min-h-[760px]
+              transition-transform
+              duration-700
+              ease-in-out
+              [transform-style:preserve-3d]
+
+              ${isLogin ? "" : "[transform:rotateY(180deg)]"}
+            `}
+          >
+            {/* =================================================
+                LOGIN SIDE
+            ================================================= */}
+
+            <div
+              className="
+                absolute
+                inset-0
+                w-full
+                min-h-[760px]
+
+                bg-white/10
+                backdrop-blur-2xl
+
+                border
+                border-white/20
+
+                rounded-3xl
+
+                p-10
+                md:p-14
+
+                shadow-2xl
+
+                [backface-visibility:hidden]
+
+                flex
+                flex-col
+                justify-center
+              "
+            >
+              {/* HEADER */}
+
+              <div
+                className="
+                text-center
+                mb-10
+              "
+              >
+                <div
+                  className="
+                  mx-auto
+                  w-16
+                  h-16
+                  bg-[#D4AF37]
+                  rounded-2xl
+                  flex
+                  items-center
+                  justify-center
+                  mb-6
+                "
+                >
+                  <Users className="text-[#0A1628]" size={32} />
+                </div>
+
+                <h2
+                  className="
+                  text-3xl
+                  font-bold
+                  text-white
+                "
+                >
+                  Parent Portal
+                </h2>
+
+                <p
+                  className="
+                  text-slate-300
+                  mt-2
+                "
+                >
+                  Access your child's progress
+                </p>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm text-slate-300 mb-3">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-5 top-4 text-slate-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                  placeholder="Enter your password"
-                />
+              {/* LOGIN FORM */}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* EMAIL */}
+
+                <div>
+                  <label
+                    className="
+                    block
+                    text-sm
+                    text-slate-300
+                    mb-2
+                  "
+                  >
+                    Email or Phone Number
+                  </label>
+
+                  <input
+                    type="text"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="
+                      w-full
+                      bg-white/10
+                      border
+                      border-white/20
+                      rounded-2xl
+                      py-4
+                      px-5
+                      focus:outline-none
+                      focus:border-[#D4AF37]
+                      text-white
+                    "
+                    placeholder="parent@email.com or 017XX-XXXXXX"
+                  />
+                </div>
+
+                {/* PASSWORD */}
+
+                <div>
+                  <label
+                    className="
+                    block
+                    text-sm
+                    text-slate-300
+                    mb-2
+                  "
+                  >
+                    Password
+                  </label>
+
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      className="
+                        w-full
+                        bg-white/10
+                        border
+                        border-white/20
+                        rounded-2xl
+                        py-4
+                        px-5
+                        focus:outline-none
+                        focus:border-[#D4AF37]
+                        text-white
+                      "
+                      placeholder="Enter your password"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="
+                        absolute
+                        right-5
+                        top-4
+                        text-slate-400
+                        hover:text-white
+                      "
+                    >
+                      {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* LOGIN BUTTON */}
+
+                <button
+                  type="submit"
+                  className="
+                    w-full
+                    bg-[#D4AF37]
+                    hover:bg-[#E8C65A]
+                    text-[#0A1628]
+                    font-semibold
+                    py-5
+                    rounded-2xl
+                    transition-all
+                    mt-4
+                  "
+                >
+                  Login to Parent Portal
+                </button>
+              </form>
+
+              {/* REGISTER SWITCH */}
+
+              <div
+                className="
+                text-center
+                mt-8
+              "
+              >
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-4 text-slate-400 hover:text-white"
+                  onClick={() => setIsLogin(false)}
+                  className="
+                    text-[#D4AF37]
+                    hover:text-white
+                    transition-colors
+                  "
                 >
-                  {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                  Don't have an account? Register as Parent
                 </button>
               </div>
             </div>
 
-            <div className="flex justify-between text-sm">
-              <Link href="#" className="text-[#D4AF37] hover:text-white transition-colors">
-                Forgot Password?
-              </Link>
-            </div>
+            {/* =================================================
+                REGISTER SIDE
+            ================================================= */}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#D4AF37] hover:bg-[#E8C65A] text-[#0A1628] font-semibold py-5 rounded-3xl flex items-center justify-center gap-3 transition-all text-lg disabled:opacity-70"
+            <div
+              className="
+                absolute
+                inset-0
+                w-full
+                min-h-[760px]
+
+                bg-white/10
+                backdrop-blur-2xl
+
+                border
+                border-white/20
+
+                rounded-3xl
+
+                p-8
+                md:p-10
+
+                shadow-2xl
+
+                [backface-visibility:hidden]
+
+                [transform:rotateY(180deg)]
+
+                overflow-y-auto
+              "
             >
-              {loading ? "Signing In..." : "Login to Parent Portal"}
-            </button>
-          </form>
+              {/* REGISTER HEADER */}
 
-          <div className="text-center mt-8 text-slate-400">
-            Don't have an account?{" "}
-            <Link href="/Preant/PreantRegistar" className="text-[#D4AF37] hover:text-white font-medium">
-              Register as Parent
-            </Link>
+              <div
+                className="
+                text-center
+                mb-8
+              "
+              >
+                {/* IMAGE */}
+
+                <div
+                  className="
+                  mx-auto
+                  w-20
+                  h-20
+                  bg-[#D4AF37]
+                  rounded-3xl
+                  flex
+                  items-center
+                  justify-center
+                  mb-5
+                  overflow-hidden
+                  shadow-xl
+                  relative
+                "
+                >
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Profile Preview"
+                      className="
+                        w-full
+                        h-full
+                        object-cover
+                      "
+                    />
+                  ) : (
+                    <Users className="text-[#0A1628]" size={42} />
+                  )}
+                </div>
+
+                <h2
+                  className="
+                  text-3xl
+                  font-serif
+                  font-bold
+                  text-white
+                "
+                >
+                  Parent Registration
+                </h2>
+
+                <p
+                  className="
+                  text-slate-300
+                  mt-2
+                "
+                >
+                  Create your parent account
+                </p>
+              </div>
+
+              {/* REGISTER FORM */}
+
+              <form onSubmit={handleRegisterSubmit} className="space-y-6">
+                {/* PROFILE IMAGE */}
+
+                <div
+                  className="
+                  flex
+                  flex-col
+                  items-center
+                "
+                >
+                  <label
+                    className="
+                    block
+                    text-sm
+                    text-slate-300
+                    mb-3
+                  "
+                  >
+                    Profile Picture
+                  </label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="profileImage"
+                  />
+
+                  <label
+                    htmlFor="profileImage"
+                    className="
+                      cursor-pointer
+                      flex
+                      flex-col
+                      items-center
+                      justify-center
+
+                      border-2
+                      border-dashed
+                      border-white/30
+
+                      hover:border-[#D4AF37]
+
+                      rounded-2xl
+
+                      p-5
+
+                      transition-all
+
+                      w-44
+                      h-32
+
+                      bg-white/5
+                      hover:bg-white/10
+                    "
+                  >
+                    <Upload
+                      className="
+                        text-[#D4AF37]
+                        mb-2
+                      "
+                      size={32}
+                    />
+
+                    <span
+                      className="
+                      text-slate-300
+                      text-sm
+                      text-center
+                    "
+                    >
+                      Click to upload
+                      <br />
+                      <span
+                        className="
+                        text-xs
+                        text-slate-500
+                      "
+                      >
+                        JPG, PNG
+                      </span>
+                    </span>
+                  </label>
+                </div>
+
+                {/* PARENT INFORMATION */}
+
+                <div className="space-y-5">
+                  <h3
+                    className="
+                    text-lg
+                    font-semibold
+                    text-white
+                    border-b
+                    border-white/10
+                    pb-2
+                  "
+                  >
+                    Parent Information
+                  </h3>
+
+                  {/* FULL NAME */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Parent Full Name
+                    </label>
+
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={registerData.fullName}
+                      onChange={handleRegisterChange}
+                      required
+                      className="
+                        w-full
+                        bg-white/10
+                        border
+                        border-white/20
+                        rounded-2xl
+                        py-4
+                        px-5
+                        focus:outline-none
+                        focus:border-[#D4AF37]
+                        text-white
+                      "
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+
+                  {/* EMAIL */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Email Address
+                    </label>
+
+                    <div className="relative">
+                      <Mail
+                        className="
+                          absolute
+                          left-5
+                          top-4
+                          text-slate-400
+                        "
+                      />
+
+                      <input
+                        type="email"
+                        name="email"
+                        value={registerData.email}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          pl-14
+                          pr-5
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="parent@email.com"
+                      />
+                    </div>
+                  </div>
+
+                  {/* PHONE */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Phone Number
+                    </label>
+
+                    <div className="relative">
+                      <Phone
+                        className="
+                          absolute
+                          left-5
+                          top-4
+                          text-slate-400
+                        "
+                      />
+
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={registerData.phone}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          pl-14
+                          pr-5
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="017XX-XXXXXX"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* CHILD INFORMATION */}
+
+                <div className="space-y-5">
+                  <h3
+                    className="
+                    text-lg
+                    font-semibold
+                    text-white
+                    border-b
+                    border-white/10
+                    pb-2
+                  "
+                  >
+                    Child Information
+                  </h3>
+
+                  {/* CHILD NAME */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Child's Name
+                    </label>
+
+                    <input
+                      type="text"
+                      name="childName"
+                      value={registerData.childName}
+                      onChange={handleRegisterChange}
+                      required
+                      className="
+                        w-full
+                        bg-white/10
+                        border
+                        border-white/20
+                        rounded-2xl
+                        py-4
+                        px-5
+                        focus:outline-none
+                        focus:border-[#D4AF37]
+                        text-white
+                      "
+                      placeholder="Child's full name"
+                    />
+                  </div>
+
+                  {/* CHILD EMAIL */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Child Email Address
+                    </label>
+
+                    <div className="relative">
+                      <Mail
+                        className="
+                          absolute
+                          left-5
+                          top-4
+                          text-slate-400
+                        "
+                      />
+
+                      <input
+                        type="email"
+                        name="childEmail"
+                        value={registerData.childEmail}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          pl-14
+                          pr-5
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="Student Email"
+                      />
+                    </div>
+                  </div>
+
+                  {/* CHILD CLASS & ROLL */}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        className="
+                        block
+                        text-sm
+                        text-slate-300
+                        mb-2
+                      "
+                      >
+                        Child's Class
+                      </label>
+
+                      <input
+                        type="text"
+                        name="childClass"
+                        value={registerData.childClass}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          px-5
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="Class 8"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        className="
+                        block
+                        text-sm
+                        text-slate-300
+                        mb-2
+                      "
+                      >
+                        Child's Roll
+                      </label>
+
+                      <input
+                        type="text"
+                        name="childRoll"
+                        value={registerData.childRoll}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          px-5
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="Roll 45"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECURITY */}
+
+                <div className="space-y-5">
+                  <h3
+                    className="
+                    text-lg
+                    font-semibold
+                    text-white
+                    border-b
+                    border-white/10
+                    pb-2
+                  "
+                  >
+                    Account Security
+                  </h3>
+
+                  {/* PASSWORD */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Password
+                    </label>
+
+                    <div className="relative">
+                      <Lock
+                        className="
+                          absolute
+                          left-5
+                          top-4
+                          text-slate-400
+                        "
+                      />
+
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={registerData.password}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          pl-14
+                          pr-14
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="Create password"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="
+                          absolute
+                          right-5
+                          top-4
+                          text-slate-400
+                          hover:text-white
+                        "
+                      >
+                        {showPassword ? (
+                          <EyeOff size={22} />
+                        ) : (
+                          <Eye size={22} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* CONFIRM PASSWORD */}
+
+                  <div>
+                    <label
+                      className="
+                      block
+                      text-sm
+                      text-slate-300
+                      mb-2
+                    "
+                    >
+                      Confirm Password
+                    </label>
+
+                    <div className="relative">
+                      <Lock
+                        className="
+                          absolute
+                          left-5
+                          top-4
+                          text-slate-400
+                        "
+                      />
+
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={registerData.confirmPassword}
+                        onChange={handleRegisterChange}
+                        required
+                        className="
+                          w-full
+                          bg-white/10
+                          border
+                          border-white/20
+                          rounded-2xl
+                          py-4
+                          pl-14
+                          pr-14
+                          focus:outline-none
+                          focus:border-[#D4AF37]
+                          text-white
+                        "
+                        placeholder="Confirm password"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="
+                          absolute
+                          right-5
+                          top-4
+                          text-slate-400
+                          hover:text-white
+                        "
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff size={22} />
+                        ) : (
+                          <Eye size={22} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* REGISTER BUTTON */}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="
+                    w-full
+                    bg-[#D4AF37]
+                    hover:bg-[#E8C65A]
+                    text-[#0A1628]
+                    font-semibold
+                    py-5
+                    rounded-3xl
+                    flex
+                    items-center
+                    justify-center
+                    gap-3
+                    transition-all
+                    text-lg
+                    disabled:opacity-70
+                    shadow-lg
+                  "
+                >
+                  {loading ? "Creating Account..." : "Create Parent Account"}
+                </button>
+              </form>
+
+              {/* LOGIN SWITCH */}
+
+              <div
+                className="
+                text-center
+                mt-6
+                pb-3
+              "
+              >
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(true)}
+                  className="
+                    text-[#D4AF37]
+                    hover:text-white
+                    font-medium
+                  "
+                >
+                  Already have an account? Login here
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
