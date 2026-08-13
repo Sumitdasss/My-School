@@ -7,22 +7,23 @@ import { Bell, Calendar, ArrowRight } from "lucide-react";
 export default function NoticeBoard() {
 
  const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
 
- useEffect(() => {
+useEffect(() => {
   fetch("/api/Notice")
     .then((res) => res.json())
     .then((data) => {
-      setNotices(data.data);
+      setNotices(Array.isArray(data.data) ? data.data : []);
       setLoading(false);
     })
     .catch((err) => {
       console.log(err);
+      setNotices([]);
       setLoading(false);
     });
 }, []);
 
-  const latestNotices = notices.slice(0, 4);
+const latestNotices = notices.slice(0, 4);
   return (
     <section className="bg-[#0c3750] py-20 md:py-28 relative overflow-hidden">
       <div className="max-w-360 mx-auto px-5 md:px-8">

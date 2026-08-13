@@ -1739,6 +1739,587 @@ const deleteStudent = async (id) => {
   );
 }
 
+
+import {
+  Plus,
+  Trash2,
+  ArrowLeft,
+  Save,
+} from "lucide-react";
+import {  useSearchParams } from "next/navigation";
+
+ function MCQQuestionManagement() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Exam ID URL থেকে নেওয়া হবে
+  // Example: /MCQQuestionManagement?examId=1
+  const examId = searchParams.get("examId");
+
+  const [questions, setQuestions] = useState([]);
+
+  const [question, setQuestion] = useState("");
+  const [options, setOptions] = useState(["", "", "", ""]);
+  const [correctAnswer, setCorrectAnswer] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
+const [exams, setExams] = useState([]);
+const [selectedExam, setSelectedExam] = useState("");
+  // =========================
+  // LOAD QUESTIONS
+  // =========================
+
+
+useEffect(() => {
+  const loadExams = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:5000/api/mcq-questions/getmcqexam"
+      );
+
+      const data = await res.json();
+
+      console.log("Exam API:", data);
+
+      if (data.success) {
+        setExams(data.data);
+      }
+    } catch (error) {
+      console.error("Load exams error:", error);
+    }
+  };
+
+  loadExams();
+}, []);
+
+
+  const loadQuestions = async () => {
+    try {
+      setLoadingQuestions(true);
+
+      const res = await fetch(
+        `http://localhost:5000/api/mcq-questions/getquction?examId=${selectedExam}`
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setQuestions(data.data);
+      }
+    } catch (error) {
+      console.error("Load questions error:", error);
+    } finally {
+      setLoadingQuestions(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedExam) {
+      loadQuestions();
+    } else {
+      setLoadingQuestions(false);
+    }
+  }, [selectedExam]);
+
+  // =========================
+  // OPTION CHANGE
+  // =========================
+
+  const handleOptionChange = (index, value) => {
+    const updatedOptions = [...options];
+
+    updatedOptions[index] = value;
+
+    setOptions(updatedOptions);
+  };
+
+  // =========================
+  // ADD QUESTION
+  // =========================
+
+  const addQuestion = async () => {
+    if (!selectedExam) {
+      alert("Exam ID is missing");
+      return;
+    }
+
+    if (!question.trim()) {
+      alert("Please enter a question");
+      return;
+    }
+
+    if (options.some((option) => !option.trim())) {
+      alert("Please fill all options");
+      return;
+    }
+
+    if (!correctAnswer) {
+      alert("Please select the correct answer");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const nextQuestionNumber =
+        questions.length + 1;
+
+      const res = await fetch(
+        "http://localhost:5000/api/mcq-questions/postquction",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            examId: Number(selectedExam),
+
+            setName: "A",
+
+            questionNumber: nextQuestionNumber,
+
+            question,
+
+            optionA: options[0],
+            optionB: options[1],
+            optionC: options[2],
+            optionD: options[3],
+
+            correctAnswer,
+
+            marks: 1,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Failed to add question");
+        return;
+      }
+
+      // Database থেকে পাওয়া question state-এ add
+      setQuestions((prev) => [
+        ...prev,
+        data.data,
+      ]);
+
+      // Form reset
+      setQuestion("");
+      setOptions(["", "", "", ""]);
+      setCorrectAnswer("");
+
+      alert("Question added successfully!");
+    } catch (error) {
+      console.error("Add question error:", error);
+
+      alert("Server error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // =========================
+  // DELETE QUESTION
+  // =========================
+
+  const deleteQuestion = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/mcq-questions/deletquction/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Delete failed");
+        return;
+      }
+
+      setQuestions((prev) =>
+        prev.filter((item) => item.id !== id)
+      );
+    } catch (error) {
+      console.error("Delete error:", error);
+
+      alert("Server error");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-6">
+
+      {/* ================= HEADER ================= */}
+
+      <div className="mb-6 flex items-center justify-between">
+
+        <div>
+          <h1 className="text-3xl font-bold text-slate-800">
+            MCQ Question Management
+          </h1>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Create and manage multiple choice questions
+          </p>
+        </div>
+
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-100"
+        >
+          <ArrowLeft size={18} />
+
+          Back
+        </button>
+
+      </div>
+
+
+      {/* ================= EXAM INFO ================= */}
+
+      <div className="mb-5">
+  <label className="mb-2 block font-semibold text-slate-700">
+    Select MCQ Exam
+  </label>
+
+  <select
+    value={selectedExam}
+    onChange={(e) => setSelectedExam(e.target.value)}
+    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+  >
+    <option value="">
+      Select an exam
+    </option>
+
+    {exams.map((exam) => (
+      <option key={exam.id} value={exam.id}>
+        {exam.examName}  sub:{exam.subject}
+      </option>
+    ))}
+  </select>
+</div>
+
+
+      {/* ================= CREATE QUESTION ================= */}
+
+      <div className="rounded-2xl bg-white p-6 shadow-sm">
+
+        <div className="mb-5 flex items-center gap-2">
+
+          <Plus
+            size={22}
+            className="text-blue-600"
+          />
+
+          <h2 className="text-xl font-bold text-slate-800">
+            Add New Question
+          </h2>
+
+        </div>
+
+
+        {/* QUESTION */}
+
+        <div className="mb-5">
+
+          <label className="mb-2 block font-semibold text-slate-700">
+            Question
+          </label>
+
+          <textarea
+            value={question}
+            onChange={(e) =>
+              setQuestion(e.target.value)
+            }
+            placeholder="Enter your MCQ question..."
+            rows={3}
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          />
+
+        </div>
+
+
+        {/* OPTIONS */}
+
+        <div className="grid gap-4 md:grid-cols-2">
+
+          {options.map((option, index) => (
+
+            <div key={index}>
+
+              <label className="mb-2 block font-semibold text-slate-700">
+
+                Option{" "}
+                {String.fromCharCode(65 + index)}
+
+              </label>
+
+              <input
+                type="text"
+                value={option}
+                onChange={(e) =>
+                  handleOptionChange(
+                    index,
+                    e.target.value
+                  )
+                }
+                placeholder={`Enter option ${String.fromCharCode(
+                  65 + index
+                )}`}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+
+            </div>
+
+          ))}
+
+        </div>
+
+
+        {/* CORRECT ANSWER */}
+
+        <div className="mt-5">
+
+          <label className="mb-2 block font-semibold text-slate-700">
+            Correct Answer
+          </label>
+
+          <select
+            value={correctAnswer}
+            onChange={(e) =>
+              setCorrectAnswer(e.target.value)
+            }
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          >
+
+            <option value="">
+              Select correct answer
+            </option>
+
+            {options.map((option, index) => {
+
+              const letter =
+                String.fromCharCode(65 + index);
+
+              return (
+                <option
+                  key={index}
+                  value={letter}
+                >
+                  Option {letter}
+                  {option
+                    ? ` - ${option}`
+                    : ""}
+                </option>
+              );
+            })}
+
+          </select>
+
+        </div>
+
+
+        {/* ADD BUTTON */}
+
+        <div className="mt-6 flex justify-end">
+
+          <button
+            onClick={addQuestion}
+            disabled={loading || !selectedExam}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+
+            <Plus size={18} />
+
+            {loading
+              ? "Adding..."
+              : "Add Question"}
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      {/* ================= QUESTIONS ================= */}
+
+      <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+
+        <div className="mb-5 flex items-center justify-between">
+
+          <h2 className="text-xl font-bold text-slate-800">
+            Questions
+          </h2>
+
+          <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
+            {questions.length} Questions
+          </span>
+
+        </div>
+
+
+        {loadingQuestions ? (
+
+          <div className="py-12 text-center text-slate-500">
+            Loading questions...
+          </div>
+
+        ) : questions.length === 0 ? (
+
+          <div className="rounded-xl border border-dashed border-slate-300 py-12 text-center text-slate-500">
+            No questions added yet.
+          </div>
+
+        ) : (
+
+          <div className="space-y-4">
+
+            {questions.map((item, index) => {
+
+              const itemOptions = [
+                item.optionA,
+                item.optionB,
+                item.optionC,
+                item.optionD,
+              ];
+
+              return (
+
+                <div
+                  key={item.id}
+                  className="rounded-xl border border-slate-200 p-5"
+                >
+
+                  <div className="flex items-start justify-between gap-4">
+
+                    <div className="flex-1">
+
+                      <h3 className="font-semibold text-slate-800">
+
+                        {item.questionNumber ||
+                          index + 1}
+                        .{" "}
+
+                        {item.question}
+
+                      </h3>
+
+
+                      <div className="mt-4 grid gap-2 md:grid-cols-2">
+
+                        {itemOptions.map(
+                          (option, optionIndex) => {
+
+                            const letter =
+                              String.fromCharCode(
+                                65 + optionIndex
+                              );
+
+                            const isCorrect =
+                              letter ===
+                              item.correctAnswer;
+
+                            return (
+
+                              <div
+                                key={optionIndex}
+                                className={`rounded-lg border px-4 py-3 ${
+                                  isCorrect
+                                    ? "border-green-300 bg-green-50"
+                                    : "border-slate-200 bg-slate-50"
+                                }`}
+                              >
+
+                                <span className="font-semibold">
+                                  {letter}.
+                                </span>{" "}
+
+                                {option}
+
+                                {isCorrect && (
+
+                                  <span className="ml-2 text-sm font-semibold text-green-600">
+                                    ✓ Correct
+                                  </span>
+
+                                )}
+
+                              </div>
+
+                            );
+                          }
+                        )}
+
+                      </div>
+
+                    </div>
+
+
+                    {/* DELETE */}
+
+                    <button
+                      onClick={() =>
+                        deleteQuestion(item.id)
+                      }
+                      className="rounded-lg p-2 text-red-500 hover:bg-red-50"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+
+                  </div>
+
+                </div>
+
+              );
+            })}
+
+          </div>
+
+        )}
+
+      </div>
+
+
+      {/* ================= SAVE ================= */}
+
+      {questions.length > 0 && (
+
+        <div className="mt-6 flex justify-end">
+
+          <button
+            onClick={() =>
+              alert(
+                "All questions are already saved in database."
+              )
+            }
+            className="flex items-center gap-2 rounded-xl bg-green-600 px-7 py-3 font-semibold text-white hover:bg-green-700"
+          >
+
+            <Save size={18} />
+
+            Save All Questions
+
+          </button>
+
+        </div>
+
+      )}
+
+    </div>
+  );
+}
+
+
+
+
+
+
 function Teachers() {
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -2977,6 +3558,20 @@ export default function AdminPanel() {
               </div>
               {page === "AdmitCardPage" && <ChevronRight size={22} />}
             </button>
+            <button
+              onClick={() => setPage("MCQQuestionManagement")}
+              className={`w-full flex items-center justify-between px-6 py-5 rounded-3xl text-lg font-medium transition-all ${
+                page === "MCQQuestionManagement"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <UserCheck size={26} />
+                MCQManagement
+              </div>
+              {page === "MCQQuestionManagement" && <ChevronRight size={22} />}
+            </button>
           </nav>
 
           <button
@@ -2999,6 +3594,7 @@ export default function AdminPanel() {
           {page === "parent" && <Parent />}
           {page === "FeesPage" && <FeesPage />}
           {page === "AdmitCardPage" && <AdmitCardPage />}
+          {page === "MCQQuestionManagement" && <MCQQuestionManagement />}
         </main>
       </div>
     </div>

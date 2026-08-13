@@ -419,6 +419,9 @@ useEffect(() => {
     <Link href="/AllStudent" className="block px-4 py-3 hover:bg-gray-100">
       Students
     </Link>
+    <Link href="/MCQ" className="block px-4 py-3 hover:bg-gray-100">
+    ADD MCQ
+    </Link>
 
     <Link href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
       Attendance
@@ -653,7 +656,9 @@ useEffect(() => {
     <Link   onClick={() => setIsOpen(false)} href="/AllStudent" className="block px-4 py-3 hover:bg-gray-100">
       Students
     </Link>
-
+<Link href="/MCQ" onClick={() => setIsOpen(false)} className="block px-4 py-3 hover:bg-gray-100">
+    ADD MCQ
+    </Link>
     <Link   onClick={() => setIsOpen(false)} href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
       Attendance
     </Link>
