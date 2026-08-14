@@ -15,13 +15,15 @@ import {
   LayoutDashboard,
   BookOpen,
   FileText,
+  Plus,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [scrolled2, setScrolled2] = useState(false);
+  const pathname = usePathname();
   const handel=()=>{
     setScrolled2(!scrolled2)
   }
@@ -262,67 +264,78 @@ useEffect(() => {
 }, []);
 
 
+  const isActive = (href) => href && pathname === href;
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 ${
-    scrolled ? "bg-[#3F5B16]" : "bg-[#044F58]"
+    scrolled
+    ? "bg-[#102A27]/70 backdrop-blur-xl"
+    : "bg-[#061A24]/70 backdrop-blur-xl"
   } border-b border-[#D9B65C]/15`}
     >
-      {/* layered gold hairline — bronze to champagne, feels engraved rather than flat */}
-      <div className="h-[3px] w-full bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F]" />
-
-      <div className="max-w-360 mx-auto ">
+      <div className="max-w-360 mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-20">
 
           {/* Logo */}
-          <Link href="/" className="flex border-none items-center space-x-3 group">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full bg-[#D9B65C]/20 blur-md scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <img src="/logo.png" alt="" className="w-15 h-15 relative" />
+          <Link href="/" className="flex border-none items-center space-x-2.5 group">
+            <div className="relative w-9 h-9 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#D9B65C]/60 transition-colors">
+              <Plus size={16} className="text-[#F6F1E4]" />
             </div>
             <div>
               <span className="font-serif font-bold text-lg md:text-xl block text-[#F6F1E4] leading-none tracking-wide">
                 GOALKHALI IDEAL
               </span>
-              <span className="text-[11px] text-[#D9B65C] font-semibold tracking-[0.25em] uppercase block mt-1.5">
+              <span className="text-[10px] text-[#D9B65C] font-semibold tracking-[0.25em] uppercase block mt-1">
                 High School
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden xl:flex items-center gap-x-1 flex-1 justify-center">
+          {/* Desktop Navigation - pill capsule */}
+          <div className="hidden xl:flex items-center gap-x-1 bg-white/[0.04] border border-white/10 rounded-full px-2 py-1.5 shadow-[0_1px_0_rgba(255,255,255,0.05)_inset]">
             {menuItems.map((item, index) => (
               <div key={index} className="relative group/menu">
                 {item.dropdown ? (
-                  <button className="relative flex items-center space-x-1 px-4 py-2 text-sm font-medium text-[#B9C4D6] rounded-md hover:text-[#F6F1E4] transition-colors">
+                  <button
+                    className={`relative flex items-center space-x-1 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                      item.dropdown.some((d) => isActive(d.href))
+                        ? "bg-[#F2B8C6] text-[#3B0A12]"
+                        : "text-[#B9C4D6] hover:text-[#F6F1E4]"
+                    }`}
+                  >
                     <span>{item.name}</span>
                     <ChevronDown
-                      size={14}
-                      className="text-[#D9B65C] group-hover/menu:rotate-180 transition-transform duration-200"
+                      size={13}
+                      className="group-hover/menu:rotate-180 transition-transform duration-200"
                     />
-                    <span className="absolute left-4 right-4 -bottom-0.5 h-[2px] bg-gradient-to-r from-[#8F6A1F] to-[#F2DFA0] scale-x-0 group-hover/menu:scale-x-100 origin-left transition-transform duration-200" />
                   </button>
                 ) : (
                   <Link
                     href={item.href}
-                    className="relative block px-4 py-2 text-sm font-medium text-[#B9C4D6] rounded-md hover:text-[#F6F1E4] transition-colors"
+                    className={`relative block px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                      isActive(item.href)
+                        ? "bg-[#F2B8C6] text-[#3B0A12]"
+                        : "text-[#B9C4D6] hover:text-[#F6F1E4]"
+                    }`}
                   >
                     {item.name}
-                    <span className="absolute left-4 right-4 -bottom-0.5 h-[2px] bg-gradient-to-r from-[#8F6A1F] to-[#F2DFA0] scale-x-0 group-hover/menu:scale-x-100 origin-left transition-transform duration-200" />
                   </Link>
                 )}
 
                 {/* Dropdown */}
                 {item.dropdown && (
-                  <div className="absolute left-0 mt-2 w-60 rounded-xl bg-[#FCFAF3] shadow-[0_20px_45px_rgba(4,10,20,0.35)] ring-1 ring-[#081527]/10 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 translate-y-2 group-hover/menu:translate-y-0 py-2 overflow-hidden">
-                    <div className="h-[3px] w-full bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F] absolute top-0 left-0" />
+                  <div className="absolute left-0 mt-2 w-60 rounded-xl bg-[#0B1524] shadow-[0_20px_45px_rgba(0,0,0,0.5)] ring-1 ring-white/10 opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-50 translate-y-2 group-hover/menu:translate-y-0 py-2 overflow-hidden">
+                    <div className="h-[2px] w-full bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F] absolute top-0 left-0" />
                     {item.dropdown.map((subItem, subIndex) => (
                       <Link
                         key={subIndex}
                         href={subItem.href}
-                        className="flex items-center gap-2 px-4 py-2.5 mt-1 text-sm text-[#26344A] hover:bg-[#081527]/[0.04] hover:text-[#081527] hover:pl-5 transition-all duration-150"
+                        className={`flex items-center gap-2 px-4 py-2.5 mt-1 text-sm transition-all duration-150 ${
+                          isActive(subItem.href)
+                            ? "text-[#F2B8C6]"
+                            : "text-[#C7D0DE] hover:bg-white/5 hover:text-white hover:pl-5"
+                        }`}
                       >
                         <span className="w-1 h-1 rounded-full bg-[#D9B65C] shrink-0" />
                         {subItem.name}
@@ -342,21 +355,21 @@ useEffect(() => {
             {userData ?(
          
   <div className="hidden xl:block relative group/profile">
-    <button className="flex items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
+    <button className="flex items-center gap-3 px-3 py-2 rounded-full bg-white/[0.04] border border-white/10 hover:border-[#D9B65C]/40 transition-colors">
 
       <img
          src={userData?.photo || "/default-user.png"}
          alt={userData?.fullName || "User"}
-        className="w-10 h-10 rounded-full object-cover border-2 border-white"
+        className="w-9 h-9 rounded-full object-cover border-2 border-white/20"
       />
 
-      <span className="font-semibold text-[#081527]">
+      <span className="font-semibold text-[#F6F1E4] text-sm">
         {userData.fullName}
       </span>
 
       <ChevronDown
         size={16}
-        className="group-hover/profile:rotate-180 transition-transform"
+        className="text-[#B9C4D6] group-hover/profile:rotate-180 transition-transform"
       />
     </button>
 { role==="student" &&(<>
@@ -366,22 +379,22 @@ useEffect(() => {
 </>)
 
 }
-    <div className="absolute right-0 mt-2 w-60 rounded-xl bg-white shadow-xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all">
+    <div className="absolute right-0 mt-2 w-60 rounded-xl bg-[#0B1524] ring-1 ring-white/10 shadow-2xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all">
 
     {role==="student" && (
   <>
-    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Profile
     </Link>
 
-    <Link href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/studentresult" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Result
     </Link>
-    <Link href="/Studentlogin/Payment" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/Payment" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
      Pay Fees
     </Link>
 
-    <Link href="/admit-card" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/admit-card" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Admit Card
     </Link>
   </>
@@ -389,22 +402,22 @@ useEffect(() => {
 
 {role==="parent" && (
   <>
-    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Profile
     </Link>
-     <Link href="/Preant/add-child" className="block px-4 py-3 hover:bg-gray-100">
+     <Link href="/Preant/add-child" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Add Child Profile
     </Link>
 
-    <Link href="/Preant/MyStudent" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Preant/MyStudent" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Child Profile
     </Link>
 
-    <Link href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/studentresult" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Child Result
     </Link>
 
-    <Link href="/Preant/Childaddendence" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Preant/Childaddendence" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Attendance
     </Link>
   </>
@@ -412,22 +425,22 @@ useEffect(() => {
 
 {role==="Teacher" && (
   <>
-    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Profile
     </Link>
 
-    <Link href="/AllStudent" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/AllStudent" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Students
     </Link>
-    <Link href="/MCQ" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/MCQ" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
     ADD MCQ
     </Link>
 
-    <Link href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Teacher/attendence" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Attendance
     </Link>
 
-    <Link href="/Teacher/Result" className="block px-4 py-3 hover:bg-gray-100">
+    <Link href="/Teacher/Result" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Manage Result
     </Link>
   </>
@@ -439,7 +452,7 @@ useEffect(() => {
 
       <button
         onClick={handleLogout}
-        className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
+        className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/10"
       >
         Logout
       </button>
@@ -447,7 +460,7 @@ useEffect(() => {
     </div>
   </div>
             ):(       <div className="hidden xl:block relative group/portal">
-              <button className="flex items-center space-x-2 px-5 py-2.5 text-sm font-semibold text-[#081527] bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] rounded-full shadow-[0_4px_18px_rgba(217,182,92,0.35)] hover:shadow-[0_6px_26px_rgba(217,182,92,0.55)] hover:brightness-105 transition-all">
+              <button className="flex items-center space-x-2 px-5 py-2.5 text-sm font-semibold text-[#3B0A12] bg-[#F2B8C6] rounded-full shadow-[0_4px_18px_rgba(242,184,198,0.35)] hover:shadow-[0_6px_26px_rgba(242,184,198,0.55)] hover:brightness-105 transition-all">
                 <span>Portals</span>
                 <ChevronDown
                   size={16}
@@ -455,18 +468,18 @@ useEffect(() => {
                 />
               </button>
 
-              <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#FCFAF3] shadow-[0_20px_45px_rgba(4,10,20,0.35)] ring-1 ring-[#081527]/10 opacity-0 invisible group-hover/portal:opacity-100 group-hover/portal:visible transition-all duration-200 z-50 translate-y-2 group-hover/portal:translate-y-0 py-2 overflow-hidden">
-                <div className="h-[3px] w-full bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F] absolute top-0 left-0" />
+              <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0B1524] ring-1 ring-white/10 shadow-2xl opacity-0 invisible group-hover/portal:opacity-100 group-hover/portal:visible transition-all duration-200 z-50 translate-y-2 group-hover/portal:translate-y-0 py-2 overflow-hidden">
+                <div className="h-[2px] w-full bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F] absolute top-0 left-0" />
                 {portals.map((portal, pIdx) => {
                   const Icon = portal.icon;
                   return (
                     <Link
                       key={pIdx}
                       href={portal.href}
-                      className="flex items-center gap-3 px-4 py-2.5 mt-1 text-sm text-[#26344A] hover:bg-[#081527]/[0.04] hover:text-[#081527] transition-all duration-150"
+                      className="flex items-center gap-3 px-4 py-2.5 mt-1 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white transition-all duration-150"
                     >
-                      <div className="p-1.5 rounded-md bg-[#081527]/5">
-                        <Icon size={15} className="text-[#8F6A1F]" />
+                      <div className="p-1.5 rounded-md bg-white/5">
+                        <Icon size={15} className="text-[#D9B65C]" />
                       </div>
                       <span className="font-medium">{portal.name}</span>
                     </Link>
@@ -478,9 +491,9 @@ useEffect(() => {
             {/* Mobile Hamburger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="xl:hidden p-2 rounded-lg text-[#D9B65C] hover:bg-white/5 focus:outline-none transition-colors"
+              className="xl:hidden p-2 rounded-full border border-white/15 text-[#F6F1E4] hover:bg-white/5 focus:outline-none transition-colors"
             >
-              {isOpen ? <X size={26} /> : <Menu size={26} />}
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
@@ -489,23 +502,22 @@ useEffect(() => {
       {/* Mobile Drawer Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-[#081527]/70 backdrop-blur-sm xl:hidden z-40 transition-opacity"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm xl:hidden z-40 transition-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile Navigation Drawer */}
       <div
-        className={`fixed top-0 bottom-0 right-0 w-85 max-w-sm bg-[#FCFAF3] shadow-2xl z-50 transform ${
+        className={`fixed top-0 bottom-0 right-0 w-85 max-w-sm bg-[#0B1524] shadow-2xl z-50 transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out xl:hidden flex flex-col`}
       >
         {/* Mobile Header */}
-        <div className="flex items-center justify-between px-5 py-5 bg-[#1F5673] relative overflow-hidden">
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#8F6A1F] via-[#F2DFA0] to-[#8F6A1F]" />
+        <div className="flex items-center justify-between px-5 py-5 bg-[#050B14] relative overflow-hidden border-b border-white/10">
           <div className="flex items-center gap-x-3">
-            <div className="">
-            <img src="/logo.png" alt="" className="w-15 h-15 relative" />
+            <div className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center">
+              <Plus size={16} className="text-[#F6F1E4]" />
             </div>
             <span className="font-serif font-medium text-[#F6F1E4] tracking-wide text-[15px]">
                 GOALKHALI IDEAL High School
@@ -513,7 +525,7 @@ useEffect(() => {
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 rounded-md text-[#D9B65C] hover:bg-white/10 transition-colors"
+            className="p-2 rounded-full border border-white/15 text-[#F6F1E4] hover:bg-white/10 transition-colors"
           >
             <X size={20} />
           </button>
@@ -522,20 +534,20 @@ useEffect(() => {
         {/* Mobile Scrollable Links */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-0.5">
           {menuItems.map((item, index) => (
-            <div key={index} className="border-b border-[#081527]/[0.06] pb-1 last:border-none">
+            <div key={index} className="border-b border-white/[0.06] pb-1 last:border-none">
               {item.dropdown ? (
                 <>
                   <button
                     onClick={() => toggleDropdown(index)}
-                    className="flex items-center justify-between w-full px-3 py-3.5 text-[15px] font-medium text-[#26344A] rounded-lg hover:bg-[#081527]/[0.03] transition-colors"
+                    className="flex items-center justify-between w-full px-3 py-3.5 text-[15px] font-medium text-[#E7ECF5] rounded-lg hover:bg-white/[0.04] transition-colors"
                   >
                     <span>{item.name}</span>
                     <ChevronDown
                       size={18}
                       className={`transform transition-transform duration-200 ${
                         activeDropdown === index
-                          ? "rotate-180 text-[#8F6A1F]"
-                          : "text-[#9AA6B8]"
+                          ? "rotate-180 text-[#D9B65C]"
+                          : "text-[#7C8AA0]"
                       }`}
                     />
                   </button>
@@ -550,7 +562,11 @@ useEffect(() => {
                         key={subIndex}
                         href={subItem.href}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center space-x-2 px-4 py-2.5 text-sm text-[#5B6B82] rounded-md hover:bg-[#081527]/[0.04] hover:text-[#081527] transition-colors"
+                        className={`flex items-center space-x-2 px-4 py-2.5 text-sm rounded-md transition-colors ${
+                          isActive(subItem.href)
+                            ? "text-[#F2B8C6]"
+                            : "text-[#9AA6BC] hover:bg-white/[0.04] hover:text-white"
+                        }`}
                       >
                         <span className="w-1 h-1 rounded-full bg-[#D9B65C]" />
                         <span>{subItem.name}</span>
@@ -562,7 +578,11 @@ useEffect(() => {
                 <Link
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="block px-3 py-3.5 text-[15px] font-medium text-[#26344A] rounded-lg hover:bg-[#081527]/[0.03] hover:text-[#081527] transition-colors"
+                  className={`block px-3 py-3.5 text-[15px] font-medium rounded-lg transition-colors ${
+                    isActive(item.href)
+                      ? "text-[#F2B8C6]"
+                      : "text-[#E7ECF5] hover:bg-white/[0.04]"
+                  }`}
                 >
                   {item.name}
                 </Link>
@@ -579,21 +599,21 @@ useEffect(() => {
           {userData ?(<>
 
          <div className="md:hidden mt-10  relative ">
-    <button   onClick={handel}  className="flex w-full items-center gap-3 px-3 py-2 rounded-full bg-gradient-to-r from-[#8F6A1F] via-[#D9B65C] to-[#F2DFA0] shadow-md">
+    <button   onClick={handel}  className="flex w-full items-center gap-3 px-3 py-2 rounded-full bg-white/[0.04] border border-white/10">
 
       <img
          src={userData?.photo || "/default-user.png"}
          alt={userData?.fullName || "User"}
-        className="w-10 h-10 rounded-full object-cover border-2 border-white"
+        className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
       />
 
-      <span className="font-semibold text-[#081527]">
+      <span className="font-semibold text-[#F6F1E4]">
         {userData.fullName}
       </span>
 
       <ChevronDown
         size={16}
-        className="group-hover/profile:rotate-180 transition-transform"
+        className="text-[#B9C4D6] group-hover/profile:rotate-180 transition-transform"
       />
     </button>
 
@@ -606,19 +626,19 @@ useEffect(() => {
 }
     <div  className={`mt-2 overflow-hidden transition-all duration-300 ${
     scrolled2 ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible"
-  } bg-white rounded-xl shadow-xl`}>
+  } bg-[#0B1524] ring-1 ring-white/10 rounded-xl shadow-xl`}>
 
     {role==="student" && (
   <>
-    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Profile
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Result
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/admit-card" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/admit-card" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Admit Card
     </Link>
   </>
@@ -626,22 +646,22 @@ useEffect(() => {
 
 {role==="parent" && (
   <>
-    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Profile
     </Link>
-     <Link   onClick={() => setIsOpen(false)} href="/Preant/add-child" className="block px-4 py-3 hover:bg-gray-100">
+     <Link   onClick={() => setIsOpen(false)} href="/Preant/add-child" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Add Child Profile
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/Preant/MyStudent" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Preant/MyStudent" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Child Profile
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Child Result
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/Preant/Childaddendence" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Preant/Childaddendence" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Attendance
     </Link>
   </>
@@ -649,21 +669,21 @@ useEffect(() => {
 
 {role==="Teacher" && (
   <>
-    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       My Profile
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/AllStudent" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/AllStudent" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Students
     </Link>
-<Link href="/MCQ" onClick={() => setIsOpen(false)} className="block px-4 py-3 hover:bg-gray-100">
+<Link href="/MCQ" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
     ADD MCQ
     </Link>
-    <Link   onClick={() => setIsOpen(false)} href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Teacher/attendence" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Attendance
     </Link>
 
-    <Link   onClick={() => setIsOpen(false)} href="/Teacher/Result" className="block px-4 py-3 hover:bg-gray-100">
+    <Link   onClick={() => setIsOpen(false)} href="/Teacher/Result" className="block px-4 py-3 text-sm text-[#C7D0DE] hover:bg-white/5 hover:text-white">
       Manage Result
     </Link>
   </>
@@ -675,7 +695,7 @@ useEffect(() => {
 onClick={handleLogout
 }
         
-        className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
+        className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/10"
       >
         Logout
       </button>
@@ -686,8 +706,8 @@ onClick={handleLogout
           </>):(<>
           
           
-           <div className="pt-5 mt-4 border-t-2 border-[#081527]/[0.06]">
-            <p className="px-3 text-[11px] font-bold text-[#9AA6B8] uppercase tracking-widest mb-2.5">
+           <div className="pt-5 mt-4 border-t-2 border-white/[0.06]">
+            <p className="px-3 text-[11px] font-bold text-[#7C8AA0] uppercase tracking-widest mb-2.5">
               User Portals
             </p>
             <div className="grid grid-cols-1 gap-2">
@@ -698,12 +718,12 @@ onClick={handleLogout
                     key={pIdx}
                     href={portal.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 bg-[#081527]/[0.04] rounded-xl hover:bg-[#D9B65C]/10 transition-colors"
+                    className="flex items-center space-x-3 px-4 py-3 bg-white/[0.04] rounded-xl hover:bg-[#D9B65C]/10 transition-colors"
                   >
-                    <div className="p-1.5 rounded-md bg-[#081527]/5">
-                      <Icon size={16} className="text-[#8F6A1F]" />
+                    <div className="p-1.5 rounded-md bg-white/5">
+                      <Icon size={16} className="text-[#D9B65C]" />
                     </div>
-                    <span className="text-sm font-semibold text-[#26344A]">
+                    <span className="text-sm font-semibold text-[#E7ECF5]">
                       {portal.name}
                     </span>
                   </Link>
