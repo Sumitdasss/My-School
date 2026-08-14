@@ -80,7 +80,7 @@ export default function StudentAuth() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/auth/student-login", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app/api/auth/student-login", {
       method: "POST",
 
       headers: {
@@ -162,7 +162,7 @@ export default function StudentAuth() {
         data.append("photo", imageFile);
       }
 
-      const res = await fetch("http://localhost:5000/api/student/register", {
+      const res = await fetch("https://my-school-backend-iota.vercel.app/api/student/register", {
         method: "POST",
         body: data,
       });
