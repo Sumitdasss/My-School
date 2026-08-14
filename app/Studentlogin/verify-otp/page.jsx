@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-export default function VerifyOTP() {
+
+function VerifyOTPContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -12,8 +13,18 @@ export default function VerifyOTP() {
   const [loading, setLoading] = useState(false);
 
   const verifyOTP = async () => {
+    if (!email) {
+      alert("Email পাওয়া যায়নি");
+      return;
+    }
+
     if (!otp) {
       alert("Please Enter OTP");
+      return;
+    }
+
+    if (otp.length !== 6) {
+      alert("Please Enter 6 Digit OTP");
       return;
     }
 
@@ -40,7 +51,7 @@ export default function VerifyOTP() {
           `/Studentlogin/change-password?email=${encodeURIComponent(email)}`
         );
       } else {
-        alert(data.message);
+        alert(data.message || "Invalid OTP");
       }
     } catch (error) {
       console.log(error);
@@ -51,36 +62,66 @@ export default function VerifyOTP() {
   };
 
   return (
-   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 px-4 sm:px-6">
-  <div className="bg-white shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-md border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 px-4 sm:px-6">
 
-    <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-gray-800 tracking-tight">
-      Verify OTP
-    </h1>
+      <div className="bg-white shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-md border border-gray-100">
 
-    <p className="text-center text-gray-500 text-sm mb-6">
-      OTP has been sent to
-      <br />
-      <span className="font-semibold text-gray-700">{email}</span>
-    </p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-gray-800 tracking-tight">
+          Verify OTP
+        </h1>
 
-    <input
-      type="text"
-      placeholder="Enter 6 Digit OTP"
-      maxLength={6}
-      value={otp}
-      onChange={(e) => setOtp(e.target.value)}
-      className="w-full border border-gray-300 rounded-xl p-3.5 outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all duration-200 text-gray-800 placeholder:text-gray-400 text-center tracking-widest text-lg"
-    />
+        <p className="text-center text-gray-500 text-sm mb-6">
+          OTP has been sent to
+          <br />
 
-    <button
-      onClick={verifyOTP}
-      disabled={loading}
-      className="w-full mt-6 bg-[#D4AF37] hover:bg-[#C5A028] active:scale-[0.98] text-white rounded-xl py-3.5 font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+          <span className="font-semibold text-gray-700">
+            {email || "your email"}
+          </span>
+        </p>
+
+        <input
+          type="text"
+          inputMode="numeric"
+          placeholder="Enter 6 Digit OTP"
+          maxLength={6}
+          value={otp}
+          onChange={(e) =>
+            setOtp(e.target.value.replace(/\D/g, ""))
+          }
+          className="w-full border border-gray-300 rounded-xl p-3.5 outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all duration-200 text-gray-800 placeholder:text-gray-400 text-center tracking-widest text-lg"
+        />
+
+        <button
+          onClick={verifyOTP}
+          disabled={loading}
+          className="w-full mt-6 bg-[#D4AF37] hover:bg-[#C5A028] active:scale-[0.98] text-white rounded-xl py-3.5 font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {loading ? "Verifying..." : "Verify OTP"}
+        </button>
+
+      </div>
+
+    </div>
+  );
+}
+
+
+// =====================================
+// MAIN PAGE
+// =====================================
+
+export default function VerifyOTP() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+          <h1 className="text-xl font-semibold">
+            Loading...
+          </h1>
+        </div>
+      }
     >
-      {loading ? "Verifying..." : "Verify OTP"}
-    </button>
-  </div>
-</div>
+      <VerifyOTPContent />
+    </Suspense>
   );
 }
