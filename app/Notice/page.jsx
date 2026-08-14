@@ -1,17 +1,18 @@
-"use client"
+"use client";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 
-import { useEffect,useRef, useState } from "react";
-
-
-export default function NoticeContent() {
+function NoticeContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
-const targetRef = useRef();
+
+  const targetRef = useRef();
+
   useEffect(() => {
     const loadNotices = async () => {
       try {
@@ -75,6 +76,7 @@ const targetRef = useRef();
   }
 
   // ----------- Notice Details ----------
+
   const notice = notices.find(
     (item) => Number(item.id) === Number(id)
   );
@@ -114,15 +116,38 @@ const targetRef = useRef();
           <p className="whitespace-pre-line">
             {notice.description}
           </p>
-  <a
-  href={notice.attachment}
-  download
-  className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl"
->
-  Download PDF
-</a>
+
+          <a
+            href={notice.attachment}
+            download
+            className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl"
+          >
+            Download PDF
+          </a>
+
         </div>
       </div>
     </div>
+  );
+}
+
+
+// ========================================
+// MAIN PAGE
+// ========================================
+
+export default function Notice() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <h1 className="text-2xl font-bold">
+            Loading...
+          </h1>
+        </div>
+      }
+    >
+      <NoticeContent />
+    </Suspense>
   );
 }
