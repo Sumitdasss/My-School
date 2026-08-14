@@ -191,7 +191,7 @@ useEffect(() => {
 
       if(student?.id){
 
-        const res = await fetch(`/api/student?id=${student.id}`);
+        const res = await fetch(`https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student.id}`);
         const data = await res.json();
 
      
