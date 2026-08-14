@@ -37,7 +37,7 @@ const loadProfile = async (id) => {
   try {
     const res = await fetch(`/api/student?id=${id}`);
     const data = await res.json();
-    setUserData(data);
+     setUserData(data.data)
   } catch (error) {
     console.log(error);
   } finally {

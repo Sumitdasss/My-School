@@ -196,7 +196,7 @@ useEffect(() => {
 
      
 
-        setUserData(data);
+        setUserData(data.data)
         setRole("student")
 
       }
