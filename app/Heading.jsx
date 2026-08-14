@@ -194,7 +194,7 @@ useEffect(() => {
   console.log("Logged Student:", student);
 
   const res = await fetch(
-    `https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student.id}`
+    `https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student?.id}`
   );
 
   const data = await res.json();
