@@ -189,18 +189,26 @@ useEffect(() => {
      
 
 
-      if(student?.id){
+     if (student?.id) {
 
-        const res = await fetch(`https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student.id}`);
-        const data = await res.json();
+  console.log("Logged Student:", student);
 
-     
+  const res = await fetch(
+    `https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student.id}`
+  );
 
-        setUserData(data);
-        setRole("student")
+  const data = await res.json();
 
-      }
+  console.log("Student Navbar API:", data);
 
+  if (!res.ok) {
+    console.log("Student API Error:", data);
+    return;
+  }
+
+  setUserData(data);
+  setRole("student");
+}
     else if(parent?.id){
 
   const res = await fetch(`/api/ParentRegistar/${parent.id}`);
