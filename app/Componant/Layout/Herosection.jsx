@@ -12,7 +12,7 @@ export default function HeroSection() {
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
 
       {/* ================= VIDEO BACKGROUND ================= */}
-      <video
+      {/* <video
         autoPlay
         loop
         muted
@@ -25,7 +25,7 @@ export default function HeroSection() {
         />
 
         Your browser does not support the video tag.
-      </video>
+      </video> */}
 
       {/* ================= DARK OVERLAY ================= */}
       <div className="absolute inset-0 bg-[#0A1628]/60 z-[1]" />
