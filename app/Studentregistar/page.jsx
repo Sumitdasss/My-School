@@ -72,7 +72,7 @@ class111:""
       data.append("photo", imageFile);
     }
 
-    const res = await fetch("https://my-school-backend-iota.vercel.app/api/student/register", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app//api/student/register", {
       method: "POST",
       body: data,
     });
