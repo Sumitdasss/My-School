@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { jwtVerify } from 'jose';
-import db from '@/db';
-import { admins } from '@/db/schema';
+import db from '../../../../db/index.js';
+import { admins } from '../../../../db/schema.js';
 
 export async function POST(request) {
   try {
