@@ -35,7 +35,7 @@ useEffect(() => {
 
 const loadProfile = async (id) => {
   try {
-    const res = await fetch(`https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student.id}`);
+    const res = await fetch(`https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${id}`);
     const data = await res.json();
      setUserData(data.data)
   } catch (error) {
