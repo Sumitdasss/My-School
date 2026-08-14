@@ -35,31 +35,11 @@ useEffect(() => {
 
 const loadProfile = async (id) => {
   try {
-    console.log("Profile Student ID:", id);
-
-    if (!id || !Number.isInteger(Number(id))) {
-      console.error("Invalid Student ID:", id);
-      setLoading(false);
-      return;
-    }
-
-    const res = await fetch(
-      `https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${Number(id)}`
-    );
-
+    const res = await fetch(`/api/student?id=${id}`);
     const data = await res.json();
-
-    console.log("Student Profile API:", data);
-
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to load student");
-    }
-
-    // যদি backend সরাসরি student object return করে
     setUserData(data);
-
   } catch (error) {
-    console.error("Student Profile Error:", error);
+    console.log(error);
   } finally {
     setLoading(false);
   }
