@@ -40,7 +40,7 @@ function ChangePasswordContent() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/chagepassword/resetpassword", {
+      const res = await fetch("https://my-school-backend-iota.vercel.app/api/chagepassword/resetpassword", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

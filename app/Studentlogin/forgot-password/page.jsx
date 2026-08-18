@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/chagepassword/sent-otp", {
+      const res = await fetch("https://my-school-backend-iota.vercel.app/api/chagepassword/sent-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

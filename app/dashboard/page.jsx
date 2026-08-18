@@ -73,7 +73,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
 
   const loadDashboardStats = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/dashboard");
+      const res = await fetch("https://my-school-backend-iota.vercel.app/api/dashboard");
       const data = await res.json();
       setStats(data);
     } catch (error) {
@@ -84,9 +84,9 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   const loadAllManagementData = async () => {
   try {
     const [s, e, a] = await Promise.all([
-      fetch("http://localhost:5000/api/subject/subshow").then((res) => res.json()),
-      fetch("http://localhost:5000/api/Exam/Getexam").then((res) => res.json()),
-      fetch("http://localhost:5000/api/Teacherassing/Assing-Teacher-show").then((res) => res.json()),
+      fetch("https://my-school-backend-iota.vercel.app/api/subject/subshow").then((res) => res.json()),
+      fetch("https://my-school-backend-iota.vercel.app/api/Exam/Getexam").then((res) => res.json()),
+      fetch("https://my-school-backend-iota.vercel.app/api/Teacherassing/Assing-Teacher-show").then((res) => res.json()),
    
     ]);
     setSubjects(s.subjects || []);
@@ -101,7 +101,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   // Management Handlers
   const addSubject = async () => {
     if (!subjectName || !subjectClass) return toast.error("সব field পূরণ করো");
-    await fetch("http://localhost:5000/api/subject/subadd", {
+    await fetch("https://my-school-backend-iota.vercel.app/api/subject/subadd", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ subjectName, class1: subjectClass }),
@@ -114,7 +114,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   const deleteSubject = async (id) => {
   console.log(`Delete ID: ${id}`);
 
-  const res = await fetch(`http://localhost:5000/api/subject/subdelet/${id}`, {
+  const res = await fetch(`https://my-school-backend-iota.vercel.app/api/subject/subdelet/${id}`, {
     method: "DELETE",
   });
 
@@ -129,7 +129,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   const addExam = async () => {
     if (!examName || !examYear || !examClass || !examSection)
       return toast.error("সব field পূরণ করো");
-    await fetch("http://localhost:5000/api/Exam/Addexam", {
+    await fetch("https://my-school-backend-iota.vercel.app/api/Exam/Addexam", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -149,7 +149,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
  const deleteExam = async (id) => {
   console.log("Delete ID:", id);
 
-  const res = await fetch(`http://localhost:5000/api/Exam/Deletexam/${id}`, {
+  const res = await fetch(`https://my-school-backend-iota.vercel.app/api/Exam/Deletexam/${id}`, {
     method: "DELETE",
   });
 
@@ -164,7 +164,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   const addAssignment = async () => {
     if (!assignTeacherId || !assignSubjectId || !assignClass || !assignSection)
       return toast.error("সব field পূরণ করো");
-    await fetch("http://localhost:5000/api/Teacherassing/Assing-Teacher-add", {
+    await fetch("https://my-school-backend-iota.vercel.app/api/Teacherassing/Assing-Teacher-add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -186,7 +186,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   
   console.log("Deleting assignment id:", id); 
 
-  const res = await fetch(`http://localhost:5000/api/Teacherassing/Assing-Teacher-delet/${id}`, { 
+  const res = await fetch(`https://my-school-backend-iota.vercel.app/api/Teacherassing/Assing-Teacher-delet/${id}`, { 
     method: "DELETE" 
   });
   
@@ -200,7 +200,7 @@ const [selectedResultExam, setSelectedResultExam] = useState("");
   if (!studentRoll || !examId) return;
 
   try {
-    const res = await fetch("http://localhost:5000/api/Result/resultshow", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app/api/Result/resultshow", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -222,7 +222,7 @@ const addResult = async () => {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/Result/resultadd", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app/api/Result/resultadd", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -257,7 +257,7 @@ const addResult = async () => {
   const deleteResult = async (id) => {
   if (!confirm("Delete করবে?")) return;
 
-  await fetch(`http://localhost:5000/api/Result/resultdelet/${id}`, { method: "DELETE" }); // ✅ query param দিয়ে
+  await fetch(`https://my-school-backend-iota.vercel.app/api/Result/resultdelet/${id}`, { method: "DELETE" }); // ✅ query param দিয়ে
   loadResults(selectedResultStudent, selectedResultExam);
 };
   // Quick Action Routes & Config
@@ -1397,7 +1397,7 @@ const [sections, setSections] = useState([]);
 
 
       
-      const res = await fetch(`http://localhost:5000/api/Student/allStudent?${params.toString()}`);
+      const res = await fetch(`https://my-school-backend-iota.vercel.app/api/Student/allStudent?${params.toString()}`);
 
       if (!res.ok) throw new Error("Failed to fetch students");
 
@@ -1425,7 +1425,7 @@ const [sections, setSections] = useState([]);
 
 
 const getFilters = async () => {
-  const res = await fetch("http://localhost:5000/api/Student/allStudent-filter");
+  const res = await fetch("https://my-school-backend-iota.vercel.app/api/Student/allStudent-filter");
   const data = await res.json();
 
   setClasses(data.classes);
@@ -1458,7 +1458,7 @@ const deleteStudent = async (id) => {
   if (!confirmDelete) return;
 
   try {
-    const res = await fetch(`http://localhost:5000/api/Student/Studentdelet/${id}`, {
+    const res = await fetch(`https://my-school-backend-iota.vercel.app/api/Student/Studentdelet/${id}`, {
       method: "DELETE",
     });
 
