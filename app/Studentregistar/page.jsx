@@ -6,6 +6,7 @@ import Link from "next/link";
 import { User, Mail, Phone, Calendar, Lock, Eye, EyeOff, ArrowLeft, Upload } from "lucide-react";
 
 export default function StudentRegister() {
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -71,14 +72,22 @@ class111:""
     if (imageFile) {
       data.append("photo", imageFile);
     }
+  
 
-    const res = await fetch("https://my-school-backend-iota.vercel.app//api/student/register", {
-      method: "POST",
-      body: data,
-    });
+const res = await fetch(
+  "https://my-school-backend-iota.vercel.app/api/student/register",
+  {
+    method: "POST",
+    body: data,
+  }
+);
 
-    const result = await res.json();
-    console.log(result);
+const result = await res.json();
+
+
+
+console.log(result);
+
     if (!res.ok) {
       alert(result.error || "Registration Failed");
       return;

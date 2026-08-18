@@ -31,7 +31,7 @@ function VerifyOTPContent() {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/student/verify-otp", {
+      const res = await fetch("http://localhost:5000/api/chagepassword/verifay-opt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/student/send-otp", {
+      const res = await fetch("http://localhost:5000/api/chagepassword/sent-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

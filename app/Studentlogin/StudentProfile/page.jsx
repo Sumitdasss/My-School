@@ -191,14 +191,14 @@ if (!alldeta) {
   </a>
 
   <a
-    href={`/Studentlogin/edit/${alldeta.id}`}
+    href={``}
     className="flex-1 px-6 py-3 rounded-xl bg-[#D4AF37] font-semibold text-center hover:bg-[#c49d28] transition"
   >
     View Result
   </a>
 
   <a
-    href={`/Studentlogin/edit/${alldeta.id}`}
+    href={``}
     className="flex-1 px-6 py-3 rounded-xl bg-[#D4AF37] font-semibold text-center hover:bg-[#c49d28] transition"
   >
     Download Admit Card

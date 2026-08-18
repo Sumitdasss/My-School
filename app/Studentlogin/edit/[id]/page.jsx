@@ -46,26 +46,27 @@ useEffect(() => {
 
 const loadStudent = async () => {
   try {
-    const res = await fetch(`/api/student/${id}`);
+    const res = await fetch(`https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${id}`);
 
     if (!res.ok) {
       alert("Student not found");
       return;
     }
 
-    const student = await res.json();
+     const result = await res.json();
+    const Studentid=result.data;
 
     setFormData({
-      fullName: student.fullName || "",
-      phone: student.phone || "",
-      email: student.email || "",
+      fullName: Studentid.fullName || "",
+      phone: Studentid.phone || "",
+      email: Studentid.email || "",
      
-      rollNumber: student.rollNumber || "",
-      section: student.section || "",
-      class: student.class1 || "",
+      rollNumber: Studentid.rollNumber || "",
+      section: Studentid.section || "",
+      class: Studentid.class1 || "",
     });
-
-    setImagePreview(student.photo);
+console.log(Studentid.fullName )
+    setImagePreview(Studentid.photo);
   } catch (err) {
     console.error(err);
   }
@@ -113,20 +114,41 @@ console.log("ID:", id);
       data.append("photo", imageFile);
     }
 
-    const res = await fetch(`/api/student/${id}`, {
-      method: "PUT",
-      body: data,
-    });
+   const res = await fetch(
+  `https://my-school-backend-iota.vercel.app/api/studentlogin/putstudentprofile/${id}`,
+  {
+    method: "PUT",
+    body: data,
+  }
+);
 
-    const result = await res.json();
-    
-    if (!res.ok) {
-      alert(result.error || "Update Failed");
-      return;
-    }
 
-    alert("Update Successful!");
-    window.location.href = "/Studentlogin/StudentProfile";
+
+console.log("STATUS:", res.status);
+console.log("URL:", res.url);
+console.log("CONTENT TYPE:", res.headers.get("content-type"));
+
+const text = await res.text();
+
+console.log("RAW RESPONSE:", text);
+
+let result;
+
+try {
+  result = JSON.parse(text);
+} catch {
+  console.error("Backend JSON দেয়নি:", text);
+  alert("Backend থেকে invalid response এসেছে");
+  return;
+}
+
+if (!res.ok) {
+  alert(result.message || result.error || "Update Failed");
+  return;
+}
+
+alert("Update Successful!");
+window.location.href = "/Studentlogin/StudentProfile";
   } catch (err) {
     console.error(err);
     alert("Something went wrong!");

@@ -75,7 +75,7 @@ export default function StudentAuth() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/auth/Teacher-login", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app/api/auth/Teacher-login", {
       method: "POST",
 
       headers: {
@@ -155,7 +155,7 @@ export default function StudentAuth() {
       }
 
       const res = await fetch(
-        "http://localhost:5000/api/TeacherRegistar/Teacherregister123",
+        "https://my-school-backend-iota.vercel.app/api/TeacherRegistar/Teacherregister123",
         {
           method: "POST",
           body: data,

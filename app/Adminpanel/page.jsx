@@ -29,7 +29,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/admin/auth/login", {
+      const res = await fetch("http://localhost:5000/api/adminlogin/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

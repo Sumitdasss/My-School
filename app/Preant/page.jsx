@@ -78,7 +78,7 @@ export default function ParentAuth() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/auth/Parent-login", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app/api/auth/Parent-login", {
       method: "POST",
 
       headers: {
@@ -159,7 +159,7 @@ export default function ParentAuth() {
       }
 
       const res = await fetch(
-        "http://localhost:5000/api/ParentRegistar/Parentregister123",
+        "https://my-school-backend-iota.vercel.app/api/ParentRegistar/Parentregister123",
         {
           method: "POST",
           body: data,

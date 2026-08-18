@@ -40,7 +40,7 @@ function ChangePasswordContent() {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/student/change-password", {
+      const res = await fetch("http://localhost:5000/api/chagepassword/resetpassword", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
