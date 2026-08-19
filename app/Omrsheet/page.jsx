@@ -98,19 +98,25 @@ export default function OMRPage() {
   // HANDLE ANSWER
   // ========================================
 
-  const handleAnswer = (qIndex, option) => {
-    setAnswers((prev) => {
-      const next = [...prev];
+const handleAnswer = (qIndex, option) => {
+  console.log("CLICKED:", qIndex, option);
 
-      next[qIndex] = next[qIndex] === option ? null : option;
+  setAnswers((prev) => {
+    const next = [...prev];
 
-      return next;
-    });
+    console.log("BEFORE:", next[qIndex]);
 
-    // Answer change করলে পুরোনো result hide হবে
-    setResult(null);
-    setError("");
-  };
+    next[qIndex] = option;
+
+    console.log("AFTER:", next[qIndex]);
+    console.log("FULL:", next);
+
+    return next;
+  });
+
+  setResult(null);
+  setError("");
+};
 
   // ========================================
   // HANDLE DIGIT
