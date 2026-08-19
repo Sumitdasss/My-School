@@ -622,7 +622,7 @@ useEffect(() => {
     <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
       My Result
     </Link>
-<Link href="//Omrsheet" className="block px-4 py-3 hover:bg-gray-100">
+<Link href="/Omrsheet" className="block px-4 py-3 hover:bg-gray-100">
      MCQ EXAM
     </Link>
     <Link   onClick={() => setIsOpen(false)} href="/admit-card" className="block px-4 py-3 hover:bg-gray-100">
