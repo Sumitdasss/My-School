@@ -327,7 +327,7 @@ useEffect(() => {
   const PatternStrip = ({ vertical = false }) => (
     <div
       className={
-        vertical ? "absolute top-0 bottom-0 w-[12px]" : "w-full h-[12px]"
+        vertical ? "absolute top-0 bottom-0 w-[12px] hidden sm:block" : "w-full h-[12px]"
       }
       style={{
         backgroundImage: `repeating-linear-gradient(${
@@ -350,6 +350,7 @@ useEffect(() => {
         px-2
         pt-2
         pb-2.5
+        w-full
       "
       style={{
         borderColor: "#e8b8cd",
@@ -377,6 +378,7 @@ useEffect(() => {
           justify-center
           gap-[3px]
           mb-1.5
+          flex-wrap
         "
       >
         {Array.from(
@@ -414,6 +416,7 @@ useEffect(() => {
           flex
           justify-center
           gap-[3px]
+          overflow-x-auto
         "
       >
         {Array.from(
@@ -452,9 +455,12 @@ useEffect(() => {
   return (
     <div
       className="
+      mt-20
         min-h-screen
         py-4
         px-2
+        sm:px-3
+        md:px-4
         flex
         flex-col
         items-center
@@ -474,9 +480,9 @@ useEffect(() => {
           bg-white
           shadow-md
           overflow-hidden
+          w-full
         "
         style={{
-          width: "100%",
           maxWidth: "960px",
           border: `2px solid ${PINK}`,
 
@@ -496,15 +502,20 @@ useEffect(() => {
 
             <div
               className="
-                pt-4
+                pt-3
+                sm:pt-4
                 pb-2
-                px-8
+                px-3
+                sm:px-5
+                md:px-8
                 text-center
               "
             >
               <h1
                 className="
-                  text-[26px]
+                  text-[18px]
+                  sm:text-[22px]
+                  md:text-[26px]
                   font-bold
                   tracking-wide
                   leading-tight
@@ -522,11 +533,16 @@ High School
               <div
                 className="
                   flex
+                  flex-wrap
                   justify-center
                   items-center
-                  gap-6
+                  gap-3
+                  sm:gap-4
+                  md:gap-6
                   mt-2
-                  text-[15px]
+                  text-[12px]
+                  sm:text-[14px]
+                  md:text-[15px]
                   font-medium
                   text-gray-800
                 "
@@ -557,6 +573,7 @@ High School
                           inline-flex
                           items-center
                           justify-center
+                          shrink-0
                         "
                       style={{
                         borderColor: PINK,
@@ -583,7 +600,8 @@ High School
                 <span
                   className="
                     font-bold
-                    text-[17px]
+                    text-[15px]
+                    sm:text-[17px]
                     ml-1
                   "
                   style={{
@@ -608,14 +626,20 @@ High School
                 <div
                   className="
                     flex
+                    flex-col
+                    sm:flex-row
                     items-center
                     gap-2
+                    w-full
+                    max-w-xs
+                    sm:max-w-none
                   "
                 >
                   <span
                     className="
                       font-bold
                       text-[13px]
+                      whitespace-nowrap
                     "
                     style={{
                       color: PINK,
@@ -630,9 +654,9 @@ High School
     setResult(null);
     setError("");
   }}
-  className="border border-gray-200 rounded-xl p-3.5 outline-none
+  className="border border-gray-200 rounded-xl p-2.5 sm:p-3.5 outline-none
     focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
-    transition-all bg-white"
+    transition-all bg-white w-full sm:w-auto text-sm"
 >
   <option value="">Select Exam Code</option>
 
@@ -663,7 +687,8 @@ High School
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[11px]
+                    sm:text-[12px]
                     font-medium
                     leading-snug
                   "
@@ -678,7 +703,8 @@ High School
 
               <p
                 className="
-                  text-[11px]
+                  text-[10px]
+                  sm:text-[11px]
                   text-gray-600
                   mt-1
                 "
@@ -694,11 +720,16 @@ High School
 
             <div
               className="
-                px-8
+                px-3
+                sm:px-5
+                md:px-8
                 py-2.5
                 grid
-                grid-cols-4
-                gap-4
+                grid-cols-1
+                sm:grid-cols-2
+                lg:grid-cols-4
+                gap-3
+                sm:gap-4
                 text-[13px]
                 border-y
               "
@@ -741,6 +772,7 @@ High School
                         bg-transparent
                         py-0.5
                         text-[13px]
+                        min-w-0
                       "
                     style={{
                       borderColor: "#d9a9c0",
@@ -758,20 +790,28 @@ High School
             <div
               className="
                 flex
-                px-5
+                flex-col
+                lg:flex-row
+                px-2
+                sm:px-3
+                md:px-5
                 py-3
-                gap-3
+                gap-4
+                sm:gap-3
               "
             >
               <div
                 className="
                   flex-1
                   flex
+                  flex-col
+                  sm:flex-row
                   gap-4
+                  min-w-0
                 "
               >
                 {[0, 20].map((offset) => (
-                  <div className="flex-1" key={offset}>
+                  <div className="flex-1 min-w-0" key={offset}>
                     <div
                       className="
                           flex
@@ -821,6 +861,7 @@ High School
                                   text-[13px]
                                   font-semibold
                                   text-gray-700
+                                  shrink-0
                                 "
                             >
                               {qNum}
@@ -831,6 +872,7 @@ High School
                                   flex
                                   gap-[5px]
                                   ml-1
+                                  flex-wrap
                                 "
                             >
                               {OPTIONS.map((opt) => (
@@ -856,25 +898,33 @@ High School
 
               <div
                 className="
-                  w-[230px]
+                  w-full
+                  lg:w-[230px]
                   flex
                   flex-col
+                  sm:flex-row
+                  lg:flex-col
                   gap-3
+                  shrink-0
                 "
               >
-                <DigitGrid
-                  label="রোল নম্বর"
-                  digitCount={6}
-                  values={rollDigits}
-                  onDigit={(c) => setDigitAt(setRollDigits, c)}
-                />
+                <div className="flex-1 min-w-0">
+                  <DigitGrid
+                    label="রোল নম্বর"
+                    digitCount={6}
+                    values={rollDigits}
+                    onDigit={(c) => setDigitAt(setRollDigits, c)}
+                  />
+                </div>
 
-                <DigitGrid
-                  label="রেজিস্ট্রেশন নম্বর"
-                  digitCount={8}
-                  values={regDigits}
-                  onDigit={(c) => setDigitAt(setRegDigits, c)}
-                />
+                <div className="flex-1 min-w-0">
+                  <DigitGrid
+                    label="রেজিস্ট্রেশন নম্বর"
+                    digitCount={8}
+                    values={regDigits}
+                    onDigit={(c) => setDigitAt(setRegDigits, c)}
+                  />
+                </div>
 
                 {/* SET */}
 
@@ -885,6 +935,9 @@ High School
                     bg-white
                     px-2
                     py-2
+                    w-full
+                    sm:w-auto
+                    lg:w-full
                   "
                   style={{
                     borderColor: "#e8b8cd",
@@ -940,6 +993,9 @@ High School
                     items-center
                     justify-center
                     overflow-hidden
+                    w-full
+                    sm:hidden
+                    lg:flex
                   "
                   style={{
                     borderColor: "#e8b8cd",
@@ -961,7 +1017,8 @@ High School
                   >
                     <span
                       className="
-                        text-[16px]
+                        text-[14px]
+                        sm:text-[16px]
                         font-black
                         tracking-wide
                         whitespace-nowrap
@@ -984,12 +1041,16 @@ High School
 
             <div
               className="
-                px-6
+                px-3
+                sm:px-4
+                md:px-6
                 py-3
                 border-t-2
                 grid
-                grid-cols-2
-                gap-6
+                grid-cols-1
+                md:grid-cols-2
+                gap-4
+                md:gap-6
                 text-[12px]
               "
               style={{
@@ -1150,7 +1211,8 @@ High School
           rounded-lg
           font-bold
           text-white
-          text-[16px]
+          text-[15px]
+          sm:text-[16px]
           tracking-wide
           transition-opacity
           hover:opacity-90
@@ -1175,7 +1237,8 @@ High School
             max-w-[960px]
             bg-[#f7f8fb]
             rounded-xl
-            p-6
+            p-4
+            sm:p-6
           "
         >
           {/* RESULT HEADER */}
@@ -1183,7 +1246,8 @@ High School
           <div className="mb-5">
             <h2
               className="
-                text-[20px]
+                text-[18px]
+                sm:text-[20px]
                 font-bold
                 mb-2
               "
@@ -1195,8 +1259,10 @@ High School
               className="
                 flex
                 flex-wrap
-                gap-3
-                text-[13px]
+                gap-2
+                sm:gap-3
+                text-[12px]
+                sm:text-[13px]
                 text-gray-600
               "
             >
@@ -1255,14 +1321,16 @@ High School
                 className="
                     bg-white
                     rounded-lg
-                    py-4
+                    py-3
+                    sm:py-4
                     text-center
                     shadow-sm
                   "
               >
                 <p
                   className="
-                      text-[13px]
+                      text-[12px]
+                      sm:text-[13px]
                       text-gray-500
                       mb-1
                     "
@@ -1272,7 +1340,8 @@ High School
 
                 <p
                   className="
-                      text-[22px]
+                      text-[20px]
+                      sm:text-[22px]
                       font-bold
                     "
                   style={{
@@ -1299,6 +1368,8 @@ High School
               font-semibold
               mb-4
               shadow-sm
+              text-sm
+              sm:text-base
             "
           >
             <span>Unanswered</span>
@@ -1310,7 +1381,8 @@ High School
 
           <h3
             className="
-              text-[16px]
+              text-[15px]
+              sm:text-[16px]
               font-bold
               mb-2
             "
@@ -1348,13 +1420,18 @@ High School
                   className="
                     bg-white
                     rounded-lg
-                    py-3
-                    px-4
+                    py-2.5
+                    sm:py-3
+                    px-3
+                    sm:px-4
                     flex
+                    flex-wrap
                     items-center
                     justify-between
+                    gap-2
                     shadow-sm
-                    text-[13px]
+                    text-[12px]
+                    sm:text-[13px]
                   "
                 >
                   <span
