@@ -14,13 +14,14 @@ export default function MCQExamCreatePage() {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    examName: "",
-    subject: "",
-    className: "",
-    section: "",
-    totalMarks: "",
-    duration: "",
-    examDate: "",
+   examCode: "",
+  examName: "",
+  subject: "",
+  className: "",
+  section: "",
+  totalMarks: "",
+  duration: "",
+  examDate: "",
   });
 
   const [questions, setQuestions] = useState([]);
@@ -168,7 +169,10 @@ export default function MCQExamCreatePage() {
       toast.error("Class select করুন");
       return;
     }
-
+if (!form.examCode.trim()) {
+  toast.error("Exam code required");
+  return;
+}
     if (!form.totalMarks) {
       toast.error("Total marks required");
       return;
@@ -188,7 +192,7 @@ export default function MCQExamCreatePage() {
       setLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/ALLMCQEXAM/Addmcq`,
+        `https://my-school-backend-iota.vercel.app/api/ALLMCQEXAM/Addmcq`,
         {
           method: "POST",
 
@@ -197,45 +201,33 @@ export default function MCQExamCreatePage() {
           },
 
           body: JSON.stringify({
-            examName: form.examName,
-            subject: form.subject,
-            className: form.className,
-            section: form.section || null,
+       examCode: form.examCode.trim(),
 
-            totalMarks: Number(
-              form.totalMarks
-            ),
+  examName: form.examName,
+  subject: form.subject,
+  className: form.className,
+  section: form.section || null,
 
-            duration: Number(
-              form.duration
-            ),
+  totalMarks: Number(form.totalMarks),
 
-            examDate:
-              form.examDate || null,
+  duration: Number(form.duration),
 
-            questions: questions.map(
-              (question) => ({
-                question:
-                  question.question,
+  examDate: form.examDate || null,
 
-                optionA:
-                  question.optionA,
+  questions: questions.map((question) => ({
+    question: question.question,
+    optionA: question.optionA,
+    optionB: question.optionB,
+    optionC: question.optionC,
+    optionD: question.optionD,
 
-                optionB:
-                  question.optionB,
+    correctAnswer: question.correctAnswer,
 
-                optionC:
-                  question.optionC,
+    // এখানে SET নয়
+    setName: question.setName,
 
-                optionD:
-                  question.optionD,
-
-                correctAnswer:question.correctAnswer,
-                  setName:question.SET,
-                marks:
-                  Number(question.marks),
-              })
-            ),
+    marks: Number(question.marks),
+  })),
           }),
         }
       );
@@ -273,7 +265,7 @@ export default function MCQExamCreatePage() {
 const [classes, setClasses] = useState([]);
 const [sections, setSections] = useState([]);
 const getFilters = async () => {
-  const res = await fetch("http://localhost:5000/api/Student/allStudent-filter");
+  const res = await fetch("https://my-school-backend-iota.vercel.app/api/Student/allStudent-filter");
   const data = await res.json();
 
   setClasses(data.classes);
@@ -326,21 +318,30 @@ useEffect(() => {
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-              <Input
-                label="Exam Name"
-                name="examName"
-                value={form.examName}
-                onChange={handleExamChange}
-                placeholder="Example: Half Yearly MCQ Exam"
-              />
+             <Input
+    label="Exam Code"
+    name="examCode"
+    value={form.examCode}
+    onChange={handleExamChange}
+    placeholder="Example: MATH-HY-2026"
+  />
 
-              <Input
-                label="Subject"
-                name="subject"
-                value={form.subject}
-                onChange={handleExamChange}
-                placeholder="Example: Mathematics"
-              />
+  <Input
+    label="Exam Name"
+    name="examName"
+    value={form.examName}
+    onChange={handleExamChange}
+    placeholder="Example: Half Yearly MCQ Exam"
+  />
+
+  <Input
+    label="Subject"
+    name="subject"
+    value={form.subject}
+    onChange={handleExamChange}
+    placeholder="Example: Mathematics"
+  />
+            
 
               {/* Class */}
 

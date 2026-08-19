@@ -377,6 +377,9 @@ useEffect(() => {
     <Link href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
       My Result
     </Link>
+    <Link href="/Omrsheet" className="block px-4 py-3 hover:bg-gray-100">
+     MCQ EXAM
+    </Link>
     <Link href="/Studentlogin/Payment" className="block px-4 py-3 hover:bg-gray-100">
      Pay Fees
     </Link>
@@ -426,7 +429,9 @@ useEffect(() => {
     <Link href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
       Attendance
     </Link>
-
+<Link   href="/Omrsheet" className="block px-4 py-3 hover:bg-gray-100">
+      Omrsheet
+    </Link>
     <Link href="/Teacher/Result" className="block px-4 py-3 hover:bg-gray-100">
       Manage Result
     </Link>
@@ -617,7 +622,9 @@ useEffect(() => {
     <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/studentresult" className="block px-4 py-3 hover:bg-gray-100">
       My Result
     </Link>
-
+<Link href="//Omrsheet" className="block px-4 py-3 hover:bg-gray-100">
+     MCQ EXAM
+    </Link>
     <Link   onClick={() => setIsOpen(false)} href="/admit-card" className="block px-4 py-3 hover:bg-gray-100">
       Admit Card
     </Link>
@@ -661,6 +668,9 @@ useEffect(() => {
     </Link>
     <Link   onClick={() => setIsOpen(false)} href="/Teacher/attendence" className="block px-4 py-3 hover:bg-gray-100">
       Attendance
+    </Link>
+    <Link   onClick={() => setIsOpen(false)} href="/Omrsheet" className="block px-4 py-3 hover:bg-gray-100">
+      Omrsheet
     </Link>
 
     <Link   onClick={() => setIsOpen(false)} href="/Teacher/Result" className="block px-4 py-3 hover:bg-gray-100">
