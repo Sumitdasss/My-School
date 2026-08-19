@@ -29,7 +29,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://my-school-hc7r.vercel.app/api/adminlogin/admin", {
+      const res = await fetch("https://my-school-backend-iota.vercel.app/api/adminlogin/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
