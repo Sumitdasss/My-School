@@ -99,17 +99,16 @@ export default function OMRPage() {
   // ========================================
 
 const handleAnswer = (qIndex, option) => {
-  console.log("CLICKED:", qIndex, option);
-
   setAnswers((prev) => {
+    // এই প্রশ্নে আগে থেকেই answer থাকলে আর কিছু করবে না
+    if (prev[qIndex] !== null) {
+      return prev;
+    }
+
     const next = [...prev];
 
-    console.log("BEFORE:", next[qIndex]);
-
+    // প্রথমবারের answer
     next[qIndex] = option;
-
-    console.log("AFTER:", next[qIndex]);
-    console.log("FULL:", next);
 
     return next;
   });
@@ -117,7 +116,6 @@ const handleAnswer = (qIndex, option) => {
   setResult(null);
   setError("");
 };
-
   // ========================================
   // HANDLE DIGIT
   // ========================================
@@ -197,11 +195,22 @@ const handleAnswer = (qIndex, option) => {
       // SEND TO BACKEND
       // ------------------------------------
 
-      const response = await fetch(`https://my-school-backend-iota.vercel.app/api/omr/cheak`, {
+const token = localStorage.getItem("token");
+
+console.log("OMR TOKEN:", token);
+
+if (!token) {
+  setError("Student login required");
+  return;
+}
+
+
+      const response = await fetch(`http://localhost:5000/api/omr/cheak`, {
         method: "POST",
 
         headers: {
           "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
         },
 
         body: JSON.stringify({

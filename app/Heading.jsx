@@ -160,6 +160,7 @@ const handleLogout = () => {
   localStorage.removeItem("Teacher");
 
   window.dispatchEvent(new Event("student-login"));
+  
 
   if (role === "student") {
   router.push("/Studentlogin");
