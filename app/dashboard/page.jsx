@@ -3390,6 +3390,416 @@ return (
 
 
 
+ function MCQResultsPage() {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const getResults = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        "https://my-school-backend-iota.vercel.app/api/MCQresult/getmcqresult"
+      );
+
+      const data = await response.json();
+
+      console.log("MCQ RESULTS:", data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to fetch results"
+        );
+      }
+
+      setResults(data.data || []);
+    } catch (error) {
+      console.error("GET RESULTS ERROR:", error);
+
+      setError(
+        error.message || "Failed to load results"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getResults();
+  }, []);
+
+  // ==============================
+  // LOADING
+  // ==============================
+const deletemcqresult = async (id) => {
+  const confirmDelete = window.confirm(
+    "আপনি কি এই Student-এর MCQ Result এবং Answers DELETE করতে চান?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(
+      `https://my-school-backend-iota.vercel.app/api/MCQresult/deletmcqresult/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.message || "MCQ Result Delete Failed"
+      );
+    }
+
+    toast.success(
+      data.message ||
+        "Student MCQ Result deleted successfully"
+    );
+
+    // ✅ Delete করার পর result list আবার load হবে
+    getResults();
+
+  } catch (error) {
+    console.error(
+      "DELETE MCQ RESULT ERROR:",
+      error
+    );
+
+    toast.error(
+      error.message || "Delete করা যায়নি"
+    );
+  }
+};
+
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">
+          Loading results...
+        </p>
+      </div>
+    );
+  }
+
+  // ==============================
+  // ERROR
+  // ==============================
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-lg">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+
+      {/* HEADER */}
+
+      <div className="max-w-7xl mx-auto mb-6">
+
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          MCQ Examination Results
+        </h1>
+
+        <p className="text-gray-500 mt-1">
+          Student examination results
+        </p>
+
+      </div>
+
+
+      {/* RESULT COUNT */}
+
+      <div className="max-w-7xl mx-auto mb-5">
+
+        <div className="bg-white rounded-xl shadow-sm p-4">
+          <p className="text-sm text-gray-500">
+            Total Results
+          </p>
+
+          <p className="text-2xl font-bold text-gray-900">
+            {results.length}
+          </p>
+        </div>
+
+      </div>
+
+
+      {/* RESULTS */}
+
+      <div className="max-w-7xl mx-auto">
+
+        {results.length === 0 ? (
+
+          <div className="bg-white rounded-xl p-8 text-center">
+            <p className="text-gray-500">
+              No MCQ results found.
+            </p>
+          </div>
+
+        ) : (
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+            {results.map((item) => {
+
+              const result = item.result;
+              const student = item.student;
+              const exam = item.exam;
+
+              return (
+
+                <div
+                  key={result.id}
+                  className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
+                >
+
+                  {/* STUDENT */}
+
+                  <div className="p-5">
+
+                    <div className="flex items-center gap-4">
+
+                      {/* PHOTO */}
+
+                      <div className="shrink-0">
+
+                        {student?.photo ? (
+
+                          <img
+                            src={student.photo}
+                            alt={student.name || "Student"}
+                            className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                          />
+
+                        ) : (
+
+                          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                            {student?.name
+                              ?.charAt(0)
+                              ?.toUpperCase() || "S"}
+                          </div>
+
+                        )}
+
+                      </div>
+
+
+                      {/* STUDENT INFO */}
+
+                      <div className="min-w-0">
+
+                        <h2 className="font-bold text-lg text-gray-900 truncate">
+                          {student?.name || "Unknown Student"}
+                        </h2>
+
+                        <p className="text-sm text-gray-500">
+                          Roll:{" "}
+                          <span className="font-semibold text-gray-700">
+                            {student?.rollNumber ?? "-"}
+                          </span>
+                        </p>
+
+                        <p className="text-sm text-gray-500 truncate">
+                          {student?.email || "-"}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+
+                    {/* EXAM */}
+
+                    <div className="mt-5 bg-gray-50 rounded-xl p-4">
+
+                      <div className="flex justify-between gap-3 mb-2">
+
+                        <span className="text-sm text-gray-500">
+                          Exam
+                        </span>
+
+                        <span className="text-sm font-semibold text-gray-900 text-right">
+                          {exam?.examName || "-"}
+                        </span>
+
+                      </div>
+
+                      <div className="flex justify-between gap-3">
+
+                        <span className="text-sm text-gray-500">
+                          Exam Code
+                        </span>
+
+                        <span className="text-sm font-semibold text-gray-900">
+                          {exam?.examCode || "-"}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+
+                    {/* MARKS */}
+
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+
+                      <div className="bg-green-50 rounded-xl p-3 text-center">
+
+                        <p className="text-xs text-gray-500">
+                          Correct
+                        </p>
+
+                        <p className="text-xl font-bold text-green-600">
+                          {result.correctAnswers}
+                        </p>
+
+                      </div>
+
+
+                      <div className="bg-red-50 rounded-xl p-3 text-center">
+
+                        <p className="text-xs text-gray-500">
+                          Wrong
+                        </p>
+
+                        <p className="text-xl font-bold text-red-600">
+                          {result.wrongAnswers}
+                        </p>
+
+                      </div>
+
+
+                      <div className="bg-gray-50 rounded-xl p-3 text-center">
+
+                        <p className="text-xs text-gray-500">
+                          Skipped
+                        </p>
+
+                        <p className="text-xl font-bold text-gray-700">
+                          {result.skippedAnswers}
+                        </p>
+
+                      </div>
+
+
+                      <div className="bg-blue-50 rounded-xl p-3 text-center">
+
+                        <p className="text-xs text-gray-500">
+                          Marks
+                        </p>
+
+                        <p className="text-xl font-bold text-blue-600">
+                          {result.obtainedMarks}
+                          <span className="text-sm text-gray-500">
+                            /{result.totalMarks}
+                          </span>
+                        </p>
+
+                      </div>
+
+                    </div>
+
+
+                    {/* PERCENTAGE */}
+
+                    <div className="mt-4">
+
+                      <div className="flex justify-between mb-1">
+
+                        <span className="text-sm font-medium text-gray-600">
+                          Percentage
+                        </span>
+
+                        <span className="text-sm font-bold text-gray-900">
+                          {result.percentage ?? 0}%
+                        </span>
+
+                      </div>
+
+
+                      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+
+                        <div
+                          className="h-full bg-blue-600 rounded-full"
+                          style={{
+                            width: `${Math.min(
+                              result.percentage ?? 0,
+                              100
+                            )}%`,
+                          }}
+                        />
+
+                      </div>
+
+                    </div>
+
+
+                    {/* DATE */}
+
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+
+                      <p className="text-xs text-gray-400">
+
+                        Result ID: {result.id}
+
+                      </p>
+
+                      {result.createdAt && (
+
+                        <p className="text-xs text-gray-400 mt-1">
+
+                          {new Date(
+                            result.createdAt
+                          ).toLocaleString("en-BD")}
+
+                        </p>
+
+                      )}
+
+
+                       <button
+      onClick={() => deletemcqresult(item.result.id)}
+      className="bg-red-500 text-white px-4 py-2 rounded-lg"
+    >
+      Delete
+    </button>
+
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              );
+
+            })}
+
+          </div>
+
+        )}
+
+      </div>
+
+    </div>
+  );
+}
+
+
+
 // ---------------------------------------------------------------------------
 // 3. MAIN WRAPPER PAGE (DEFAULT EXPORT)
 // ---------------------------------------------------------------------------
@@ -3572,6 +3982,20 @@ export default function AdminPanel() {
               </div>
               {page === "MCQQuestionManagement" && <ChevronRight size={22} />}
             </button>
+            <button
+              onClick={() => setPage("MCQResultsPage")}
+              className={`w-full flex items-center justify-between px-6 py-5 rounded-3xl text-lg font-medium transition-all ${
+                page === "MCQResultsPage"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <UserCheck size={26} />
+                MCQResultsPage
+              </div>
+              {page === "MCQResultsPage" && <ChevronRight size={22} />}
+            </button>
           </nav>
 
           <button
@@ -3595,6 +4019,7 @@ export default function AdminPanel() {
           {page === "FeesPage" && <FeesPage />}
           {page === "AdmitCardPage" && <AdmitCardPage />}
           {page === "MCQQuestionManagement" && <MCQQuestionManagement />}
+          {page === "MCQResultsPage" && <MCQResultsPage/>}
         </main>
       </div>
     </div>
