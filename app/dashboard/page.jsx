@@ -3503,298 +3503,215 @@ const deletemcqresult = async (id) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+<div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 p-4 sm:p-6 lg:p-8">
 
-      {/* HEADER */}
-
-      <div className="max-w-7xl mx-auto mb-6">
-
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+  {/* HEADER */}
+  <div className="max-w-7xl mx-auto mb-8">
+    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
           MCQ Examination Results
         </h1>
-
-        <p className="text-gray-500 mt-1">
-          Student examination results
+        <p className="text-slate-500 mt-1.5 text-sm sm:text-base">
+          Student examination results overview
         </p>
-
       </div>
 
-
-      {/* RESULT COUNT */}
-
-      <div className="max-w-7xl mx-auto mb-5">
-
-        <div className="bg-white rounded-xl shadow-sm p-4">
-          <p className="text-sm text-gray-500">
+      {/* Total Results Badge */}
+      <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-2xl px-5 py-3 shadow-sm">
+        <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
+          <span className="text-white font-bold text-lg">{results.length}</span>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
             Total Results
           </p>
-
-          <p className="text-2xl font-bold text-gray-900">
-            {results.length}
+          <p className="text-sm font-semibold text-slate-800">
+            {results.length} {results.length === 1 ? "record" : "records"}
           </p>
         </div>
-
       </div>
+    </div>
+  </div>
 
+  {/* RESULTS */}
+  <div className="max-w-7xl mx-auto">
+    {results.length === 0 ? (
+      <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/60 p-16 text-center shadow-sm">
+        <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-slate-100 flex items-center justify-center">
+          <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <p className="text-slate-500 text-lg font-medium">No MCQ results found</p>
+        <p className="text-slate-400 text-sm mt-1">Results will appear here once available</p>
+      </div>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {results.map((item) => {
+          const result = item.result;
+          const student = item.student;
+          const exam = item.exam;
+          const percentage = result.percentage ?? 0;
 
-      {/* RESULTS */}
+          return (
+            <div
+              key={result.id}
+              className="group bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300/80 transition-all duration-300 overflow-hidden"
+            >
+              {/* Top accent bar */}
+              <div className="h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500" />
 
-      <div className="max-w-7xl mx-auto">
-
-        {results.length === 0 ? (
-
-          <div className="bg-white rounded-xl p-8 text-center">
-            <p className="text-gray-500">
-              No MCQ results found.
-            </p>
-          </div>
-
-        ) : (
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-
-            {results.map((item) => {
-
-              const result = item.result;
-              const student = item.student;
-              const exam = item.exam;
-
-              return (
-
-                <div
-                  key={result.id}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
-                >
-
-                  {/* STUDENT */}
-
-                  <div className="p-5">
-
-                    <div className="flex items-center gap-4">
-
-                      {/* PHOTO */}
-
-                      <div className="shrink-0">
-
-                        {student?.photo ? (
-
-                          <img
-                            src={student.photo}
-                            alt={student.name || "Student"}
-                            className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-                          />
-
-                        ) : (
-
-                          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
-                            {student?.name
-                              ?.charAt(0)
-                              ?.toUpperCase() || "S"}
-                          </div>
-
-                        )}
-
+              <div className="p-6">
+                {/* STUDENT HEADER */}
+                <div className="flex items-start gap-4">
+                  {/* Photo */}
+                  <div className="relative shrink-0">
+                    {student?.photo ? (
+                      <img
+                        src={student.photo}
+                        alt={student.name || "Student"}
+                        className="w-16 h-16 rounded-2xl object-cover ring-2 ring-slate-100 group-hover:ring-slate-200 transition-all"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-slate-600 font-bold text-xl ring-2 ring-slate-100">
+                        {student?.name?.charAt(0)?.toUpperCase() || "S"}
                       </div>
-
-
-                      {/* STUDENT INFO */}
-
-                      <div className="min-w-0">
-
-                        <h2 className="font-bold text-lg text-gray-900 truncate">
-                          {student?.name || "Unknown Student"}
-                        </h2>
-
-                        <p className="text-sm text-gray-500">
-                          Roll:{" "}
-                          <span className="font-semibold text-gray-700">
-                            {student?.rollNumber ?? "-"}
-                          </span>
-                        </p>
-
-                        <p className="text-sm text-gray-500 truncate">
-                          {student?.email || "-"}
-                        </p>
-
-                      </div>
-
-                    </div>
-
-
-                    {/* EXAM */}
-
-                    <div className="mt-5 bg-gray-50 rounded-xl p-4">
-
-                      <div className="flex justify-between gap-3 mb-2">
-
-                        <span className="text-sm text-gray-500">
-                          Exam
-                        </span>
-
-                        <span className="text-sm font-semibold text-gray-900 text-right">
-                          {exam?.examName || "-"}
-                        </span>
-
-                      </div>
-
-                      <div className="flex justify-between gap-3">
-
-                        <span className="text-sm text-gray-500">
-                          Exam Code
-                        </span>
-
-                        <span className="text-sm font-semibold text-gray-900">
-                          {exam?.examCode || "-"}
-                        </span>
-
-                      </div>
-
-                    </div>
-
-
-                    {/* MARKS */}
-
-                    <div className="grid grid-cols-2 gap-3 mt-4">
-
-                      <div className="bg-green-50 rounded-xl p-3 text-center">
-
-                        <p className="text-xs text-gray-500">
-                          Correct
-                        </p>
-
-                        <p className="text-xl font-bold text-green-600">
-                          {result.correctAnswers}
-                        </p>
-
-                      </div>
-
-
-                      <div className="bg-red-50 rounded-xl p-3 text-center">
-
-                        <p className="text-xs text-gray-500">
-                          Wrong
-                        </p>
-
-                        <p className="text-xl font-bold text-red-600">
-                          {result.wrongAnswers}
-                        </p>
-
-                      </div>
-
-
-                      <div className="bg-gray-50 rounded-xl p-3 text-center">
-
-                        <p className="text-xs text-gray-500">
-                          Skipped
-                        </p>
-
-                        <p className="text-xl font-bold text-gray-700">
-                          {result.skippedAnswers}
-                        </p>
-
-                      </div>
-
-
-                      <div className="bg-blue-50 rounded-xl p-3 text-center">
-
-                        <p className="text-xs text-gray-500">
-                          Marks
-                        </p>
-
-                        <p className="text-xl font-bold text-blue-600">
-                          {result.obtainedMarks}
-                          <span className="text-sm text-gray-500">
-                            /{result.totalMarks}
-                          </span>
-                        </p>
-
-                      </div>
-
-                    </div>
-
-
-                    {/* PERCENTAGE */}
-
-                    <div className="mt-4">
-
-                      <div className="flex justify-between mb-1">
-
-                        <span className="text-sm font-medium text-gray-600">
-                          Percentage
-                        </span>
-
-                        <span className="text-sm font-bold text-gray-900">
-                          {result.percentage ?? 0}%
-                        </span>
-
-                      </div>
-
-
-                      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-
-                        <div
-                          className="h-full bg-blue-600 rounded-full"
-                          style={{
-                            width: `${Math.min(
-                              result.percentage ?? 0,
-                              100
-                            )}%`,
-                          }}
-                        />
-
-                      </div>
-
-                    </div>
-
-
-                    {/* DATE */}
-
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-
-                      <p className="text-xs text-gray-400">
-
-                        Result ID: {result.id}
-
-                      </p>
-
-                      {result.createdAt && (
-
-                        <p className="text-xs text-gray-400 mt-1">
-
-                          {new Date(
-                            result.createdAt
-                          ).toLocaleString("en-BD")}
-
-                        </p>
-
-                      )}
-
-
-                       <button
-      onClick={() => deletemcqresult(item.result.id)}
-      className="bg-red-500 text-white px-4 py-2 rounded-lg"
-    >
-      Delete
-    </button>
-
-
-                    </div>
-
+                    )}
                   </div>
 
+                  {/* Student Info */}
+                  <div className="min-w-0 flex-1 pt-0.5">
+                    <h2 className="font-bold text-lg text-slate-900 truncate leading-tight">
+                      {student?.name || "Unknown Student"}
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-0.5">
+                      Roll{" "}
+                      <span className="font-semibold text-slate-700">
+                        {student?.rollNumber ?? "—"}
+                      </span>
+                    </p>
+                    <p className="text-sm text-slate-400 truncate mt-0.5">
+                      {student?.email || "—"}
+                    </p>
+                  </div>
                 </div>
 
-              );
+                {/* EXAM INFO */}
+                <div className="mt-5 rounded-2xl bg-slate-50/80 border border-slate-100 p-4">
+                  <div className="flex justify-between items-start gap-3">
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                        Exam
+                      </p>
+                      <p className="text-sm font-semibold text-slate-800 leading-snug">
+                        {exam?.examName || "—"}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                        Code
+                      </p>
+                      <p className="text-sm font-mono font-semibold text-slate-700 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                        {exam?.examCode || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-            })}
+                {/* MARKS GRID */}
+                <div className="grid grid-cols-2 gap-3 mt-5">
+                  <div className="rounded-2xl bg-emerald-50/70 border border-emerald-100/80 p-3.5 text-center">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600/80 mb-1">
+                      Correct
+                    </p>
+                    <p className="text-2xl font-bold text-emerald-600">
+                      {result.correctAnswers}
+                    </p>
+                  </div>
 
-          </div>
+                  <div className="rounded-2xl bg-rose-50/70 border border-rose-100/80 p-3.5 text-center">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-rose-600/80 mb-1">
+                      Wrong
+                    </p>
+                    <p className="text-2xl font-bold text-rose-600">
+                      {result.wrongAnswers}
+                    </p>
+                  </div>
 
-        )}
+                  <div className="rounded-2xl bg-slate-50 border border-slate-100 p-3.5 text-center">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                      Skipped
+                    </p>
+                    <p className="text-2xl font-bold text-slate-700">
+                      {result.skippedAnswers}
+                    </p>
+                  </div>
 
+                  <div className="rounded-2xl bg-blue-50/70 border border-blue-100/80 p-3.5 text-center">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-600/80 mb-1">
+                      Marks
+                    </p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {result.obtainedMarks}
+                      <span className="text-sm font-medium text-slate-400">
+                        /{result.totalMarks}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* PERCENTAGE */}
+                <div className="mt-5">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-slate-600">
+                      Percentage
+                    </span>
+                    <span className="text-sm font-bold text-slate-900 tabular-nums">
+                      {percentage}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
+                      style={{
+                        width: `${Math.min(percentage, 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* FOOTER */}
+                <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs text-slate-400 font-mono truncate">
+                      ID: {result.id}
+                    </p>
+                    {result.createdAt && (
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {new Date(result.createdAt).toLocaleString("en-BD")}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => deletemcqresult(item.result.id)}
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 hover:border-rose-200 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
-
-    </div>
+    )}
+  </div>
+</div>
   );
 }
 
