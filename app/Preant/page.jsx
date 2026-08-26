@@ -77,7 +77,7 @@ export default function ParentAuth() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+setLoading(true)
     const res = await fetch("https://my-school-backend-iota.vercel.app/api/auth/Parent-login", {
       method: "POST",
 
@@ -470,6 +470,7 @@ export default function ParentAuth() {
 
                 <button
                   type="submit"
+                  disabled={loading}
                   className="
                     w-full
                     bg-[#D4AF37]
@@ -482,7 +483,7 @@ export default function ParentAuth() {
                     mt-4
                   "
                 >
-                  Login to Parent Portal
+        {loading?"Sing In...":"Sing In"}
                 </button>
               </form>
 

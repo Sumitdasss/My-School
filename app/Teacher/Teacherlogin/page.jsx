@@ -74,6 +74,7 @@ export default function StudentAuth() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+ setLoading(true)
 
     const res = await fetch("https://my-school-backend-iota.vercel.app/api/auth/Teacher-login", {
       method: "POST",
@@ -464,6 +465,7 @@ export default function StudentAuth() {
 
                 <button
                   type="submit"
+                  disabled={loading}
                   className="
                     w-full
                     bg-[#D4AF37]
@@ -476,7 +478,7 @@ export default function StudentAuth() {
                     mt-4
                   "
                 >
-                  Sign In
+                {loading?"Sing In...":"Sing In"}
                 </button>
               </form>
 
