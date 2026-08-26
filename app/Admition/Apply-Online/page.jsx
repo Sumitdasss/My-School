@@ -3,6 +3,8 @@
 
 import React, { useState } from "react";
 import { User, Mail, Phone, Calendar, ArrowRight, Upload } from "lucide-react";
+import toast from "react-hot-toast";
+
 
 export default function ApplyOnline() {
   const [formData, setFormData] = useState({
@@ -16,7 +18,7 @@ export default function ApplyOnline() {
     address: "",
   });
   
-  // ছবির ফাইল এবং প্রিভিউ স্টোরেজ করার জন্য স্টেট
+
   const [studentImage, setStudentImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -24,27 +26,77 @@ export default function ApplyOnline() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ছবি হ্যান্ডেল করার ফাংশন
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setStudentImage(file);
-      // ছবির প্রিভিউ দেখানোর জন্য URL তৈরি করা
+  
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // ছবির ফাইল এবং বাকি ডাটা কনসোলে দেখার জন্য (টেস্টিং উদ্দেশ্যে)
-    console.log("Form Data:", formData);
-    console.log("Uploaded Image File:", studentImage);
-    
-    alert("Application submitted successfully! (Demo)");
-    // এখানে পরে FormData অবজেক্ট ব্যবহার করে API call করতে হবে, কারণ ফাইলে নরমাল JSON পাঠানো যায় না।
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  try {
+    const data = new FormData();
+
+    data.append("fullName", formData.fullName);
+    data.append("fatherName", formData.fatherName);
+    data.append("motherName", formData.motherName);
+    data.append("dateOfBirth", formData.dateOfBirth);
+    data.append("class", formData.class);
+    data.append("phone", formData.phone);
+    data.append("email", formData.email);
+    data.append("address", formData.address);
+
+    // Student image
+    if (studentImage) {
+      data.append("studentImage", studentImage);
+    }
+
+    const res = await fetch(
+      "http://localhost:5000/api/addmition/apply",
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+
+    const result = await res.json();
+
+if (!res.ok) {
+  console.log("Backend Error:", result);
+
+  alert(result.message || "Something went wrong");
+  return;
+}
+
+console.log("Success:", result);
+
+    toast.success("Application submitted successfully!");
+
+    // Form reset
+    setFormData({
+      fullName: "",
+      fatherName: "",
+      motherName: "",
+      dateOfBirth: "",
+      class: "",
+      phone: "",
+      email: "",
+      address: "",
+    });
+
+    setStudentImage(null);
+    setImagePreview(null);
+
+  } catch (err) {
+    console.error("Application Error:", err);
+    alert(err.message || "Something went wrong");
+  }
+};
   return (
     <section className="bg-gradient-to-br from-[#0A1628] to-[#1A365D] py-20 md:py-28 text-white">
       <div className="max-w-4xl mx-auto px-5 md:px-8">
@@ -83,7 +135,7 @@ export default function ApplyOnline() {
                     type="file" 
                     accept="image/*" 
                     onChange={handleImageChange} 
-                    required // যদি ছবি বাধ্যতামূলক করতে চাও
+                    required 
                     className="hidden" 
                   />
                 </label>
@@ -159,7 +211,7 @@ export default function ApplyOnline() {
                   value={formData.class}
                   onChange={handleChange}
                   required
-                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full bg-white/10 text-black/70 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37]"
                 >
                   <option value="">Select Class</option>
                   <option value="6">Class 6</option>

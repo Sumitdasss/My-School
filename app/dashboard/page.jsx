@@ -13,6 +13,14 @@ import {
   ChevronRight,
   LogOut,
   Cross,
+  Check,
+  X,
+  Clock,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -3717,6 +3725,398 @@ const deletemcqresult = async (id) => {
 
 
 
+
+
+ function AdmissionAdminPage() {
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
+
+  // Backend base URL
+  const BASE_URL = "https://my-school-backend-iota.vercel.app";
+
+  // Get applications
+  const fetchApplications = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${BASE_URL}/api/addmition/applystudent`);
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Failed to load applications");
+      }
+
+      setApplications(result.data || []);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  // Update status
+  const updateStatus = async (id, status) => {
+    try {
+      setUpdatingId(id);
+
+      const res = await fetch(`${BASE_URL}/api/addmition/updet/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Failed to update status");
+      }
+
+      // Update UI immediately
+      setApplications((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, status } : item))
+      );
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Search
+  const filteredApplications = applications.filter((student) => {
+    const searchText = search.toLowerCase();
+
+    return (
+      student.fullName?.toLowerCase().includes(searchText) ||
+      student.phone?.toLowerCase().includes(searchText) ||
+      student.email?.toLowerCase().includes(searchText) ||
+      String(student.class).toLowerCase().includes(searchText)
+    );
+  });
+
+  // Image URL helper (এটাই ইমেজ না আসার মূল fix)
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${BASE_URL}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  };
+
+  // Status badge
+  const StatusBadge = ({ status }) => {
+    if (status === "approved") {
+      return (
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+          <Check size={14} />
+          Approved
+        </span>
+      );
+    }
+
+    if (status === "rejected") {
+      return (
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+          <X size={14} />
+          Rejected
+        </span>
+      );
+    }
+
+    return (
+      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
+        <Clock size={14} />
+        Pending
+      </span>
+    );
+  };
+
+
+  const pendingCount = applications.filter(
+    (item) => item.status === "pending"
+  ).length;
+
+  const approvedCount = applications.filter(
+    (item) => item.status === "approved"
+  ).length;
+
+  const rejectedCount = applications.filter(
+    (item) => item.status === "rejected"
+  ).length;
+
+  return (
+    <div className="min-h-screen bg-slate-100 p-5 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800">
+            Online Admission
+          </h1>
+          <p className="text-slate-500 mt-2">
+            Manage student admission applications
+          </p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-2xl p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Total Applications</p>
+            <h2 className="text-3xl font-bold text-slate-800 mt-2">
+              {applications.length}
+            </h2>
+          </div>
+
+          <div className="bg-yellow-50 rounded-2xl p-5 border border-yellow-100">
+            <p className="text-sm text-yellow-700">Pending</p>
+            <h2 className="text-3xl font-bold text-yellow-700 mt-2">
+              {pendingCount}
+            </h2>
+          </div>
+
+          <div className="bg-green-50 rounded-2xl p-5 border border-green-100">
+            <p className="text-sm text-green-700">Approved</p>
+            <h2 className="text-3xl font-bold text-green-700 mt-2">
+              {approvedCount}
+            </h2>
+          </div>
+
+          <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+            <p className="text-sm text-red-700">Rejected</p>
+            <h2 className="text-3xl font-bold text-red-700 mt-2">
+              {rejectedCount}
+            </h2>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="bg-white rounded-2xl p-4 shadow-sm mb-6">
+          <div className="relative max-w-md">
+            <Search
+              size={20}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="text"
+              placeholder="Search by name, phone, email or class..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full border border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-[#D4AF37]"
+            />
+          </div>
+        </div>
+
+        {/* Loading / Empty / List */}
+        {loading ? (
+          <div className="bg-white rounded-2xl p-12 text-center">
+            <div className="animate-spin w-10 h-10 border-4 border-slate-200 border-t-[#D4AF37] rounded-full mx-auto" />
+            <p className="text-slate-500 mt-4">Loading applications...</p>
+          </div>
+        ) : filteredApplications.length === 0 ? (
+          <div className="bg-white rounded-2xl p-12 text-center">
+            <User size={50} className="mx-auto text-slate-300" />
+            <h3 className="text-xl font-semibold text-slate-700 mt-4">
+              No Applications Found
+            </h3>
+            <p className="text-slate-400 mt-2">
+              No admission applications match your search.
+            </p>
+          </div>
+        ) : (
+
+
+          <div className="space-y-5">
+            {filteredApplications.map((student) => (
+              
+              <div
+                key={student.id}
+                className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+              >
+                <div className="p-5 md:p-6">
+                  <div className="flex flex-col lg:flex-row gap-6">
+                    {/* Student Image - Fixed */}
+                    <div className="shrink-0">
+
+                      
+                      {getImageUrl(student.studentImage) ? (
+                        
+                        <img
+                          src={getImageUrl(student.studentImage)}
+                          alt={student.fullName}
+                          className="w-28 h-28 rounded-2xl object-cover border-2 border-slate-100"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+
+                      {/* Fallback (always present, hidden when image loads) */}
+                      <div
+                        className={`w-28 h-28 rounded-2xl bg-slate-100 flex items-center justify-center ${
+                          getImageUrl(student.studentImage) ? "hidden" : ""
+                        }`}
+                      >
+                        <User size={40} className="text-slate-300" />
+                      </div>
+                    </div>
+
+                    {/* Information */}
+                    <div className="flex-1">
+                      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                        <div>
+                          <h2 className="text-xl font-bold text-slate-800">
+                            {student.fullName}
+                          </h2>
+                          <p className="text-sm text-slate-500 mt-1">
+                            Application ID: #{student.id}
+                          </p>
+                        </div>
+                        <StatusBadge status={student.status} />
+                      </div>
+
+                      {/* Details */}
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+                        <div className="flex items-center gap-3">
+                          <User size={18} className="text-slate-400" />
+                          <div>
+                            <p className="text-xs text-slate-400">Father</p>
+                            <p className="text-sm font-medium text-slate-700">
+                              {student.fatherName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <User size={18} className="text-slate-400" />
+                          <div>
+                            <p className="text-xs text-slate-400">Mother</p>
+                            <p className="text-sm font-medium text-slate-700">
+                              {student.motherName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <GraduationCap size={18} className="text-slate-400" />
+                          <div>
+                            <p className="text-xs text-slate-400">
+                              Applying Class
+                            </p>
+                            <p className="text-sm font-medium text-slate-700">
+                              Class {student.class}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Calendar size={18} className="text-slate-400" />
+                          <div>
+                            <p className="text-xs text-slate-400">
+                              Date of Birth
+                            </p>
+                            <p className="text-sm font-medium text-slate-700">
+                              {student.dateOfBirth}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Phone size={18} className="text-slate-400" />
+                          <div>
+                            <p className="text-xs text-slate-400">Phone</p>
+                            <p className="text-sm font-medium text-slate-700">
+                              {student.phone}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Mail size={18} className="text-slate-400" />
+                          <div className="min-w-0">
+                            <p className="text-xs text-slate-400">Email</p>
+                            <p className="text-sm font-medium text-slate-700 truncate">
+                              {student.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Address */}
+                      <div className="flex gap-3 mt-5">
+                        <MapPin size={18} className="text-slate-400 shrink-0" />
+                        <div>
+                          <p className="text-xs text-slate-400">Address</p>
+                          <p className="text-sm text-slate-700">
+                            {student.address || "No address provided"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="border-t border-slate-100 mt-6 pt-5">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <p className="text-sm font-medium text-slate-500">
+                        Change Application Status
+                      </p>
+
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => updateStatus(student.id, "pending")}
+                          disabled={updatingId === student.id}
+                          className="px-4 py-2 rounded-xl bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200 transition disabled:opacity-50"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Clock size={16} />
+                            Pending
+                          </span>
+                        </button>
+
+                        <button
+                          onClick={() => updateStatus(student.id, "approved")}
+                          disabled={updatingId === student.id}
+                          className="px-4 py-2 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition disabled:opacity-50"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Check size={16} />
+                            Approve
+                          </span>
+                        </button>
+
+                        <button
+                          onClick={() => updateStatus(student.id, "rejected")}
+                          disabled={updatingId === student.id}
+                          className="px-4 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition disabled:opacity-50"
+                        >
+                          <span className="flex items-center gap-2">
+                            <X size={16} />
+                            Reject
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 // ---------------------------------------------------------------------------
 // 3. MAIN WRAPPER PAGE (DEFAULT EXPORT)
 // ---------------------------------------------------------------------------
@@ -3913,6 +4313,20 @@ export default function AdminPanel() {
               </div>
               {page === "MCQResultsPage" && <ChevronRight size={22} />}
             </button>
+            <button
+              onClick={() => setPage("AdmissionAdminPage")}
+              className={`w-full flex items-center justify-between px-6 py-5 rounded-3xl text-lg font-medium transition-all ${
+                page === "AdmissionAdminPage"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "hover:bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <UserCheck size={26} />
+                AdmissionAdminPage
+              </div>
+              {page === "AdmissionAdminPage" && <ChevronRight size={22} />}
+            </button>
           </nav>
 
           <button
@@ -3937,6 +4351,7 @@ export default function AdminPanel() {
           {page === "AdmitCardPage" && <AdmitCardPage />}
           {page === "MCQQuestionManagement" && <MCQQuestionManagement />}
           {page === "MCQResultsPage" && <MCQResultsPage/>}
+          {page === "AdmissionAdminPage" && <AdmissionAdminPage/>}
         </main>
       </div>
     </div>
