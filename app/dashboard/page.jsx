@@ -3734,14 +3734,14 @@ const deletemcqresult = async (id) => {
   const [updatingId, setUpdatingId] = useState(null);
 
   // Backend base URL
-  const BASE_URL = "https://my-school-backend-iota.vercel.app";
+
 
   // Get applications
   const fetchApplications = async () => {
     try {
       setLoading(true);
 
-      const res = await fetch(`${BASE_URL}/api/addmition/applystudent`);
+      const res = await fetch(`https://my-school-backend-iota.vercel.app/api/addmition/applystudent`);
 
       const result = await res.json();
 
@@ -3767,7 +3767,7 @@ const deletemcqresult = async (id) => {
     try {
       setUpdatingId(id);
 
-      const res = await fetch(`${BASE_URL}/api/addmition/updet/${id}/status`, {
+      const res = await fetch(`https://my-school-backend-iota.vercel.app/api/addmition/updet/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -57,7 +57,7 @@ export default function ApplyOnline() {
     }
 
     const res = await fetch(
-      "http://localhost:5000/api/addmition/apply",
+      "https://my-school-backend-iota.vercel.app/api/addmition/apply",
       {
         method: "POST",
         body: data,
