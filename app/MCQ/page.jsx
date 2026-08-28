@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
@@ -37,6 +37,29 @@ export default function MCQExamCreatePage() {
   marks: 1,
 });
 
+
+const [exams, setExams] = useState([]);
+useEffect(() => {
+  const loadExams = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:5000/api/mcq-questions/getmcqexam"
+      );
+
+      const data = await res.json();
+
+      console.log("Exam API:", data);
+
+      if (data.success) {
+        setExams(data.data);
+      }
+    } catch (error) {
+      console.error("Load exams error:", error);
+    }
+  };
+
+  loadExams();
+}, []);
   // =========================
   // Exam input change
   // =========================
@@ -245,9 +268,7 @@ if (!form.examCode.trim()) {
         "MCQ Exam created successfully"
       );
 
-      router.push(
-        "/Admin/MCQQuestionManagement"
-      );
+    
     } catch (error) {
       console.error(
         "CREATE EXAM ERROR:",
@@ -278,31 +299,50 @@ useEffect(() => {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+    <div className="min-h-screen bg-slate-50 p-4 mt-20 md:p-6">
       <div className="mx-auto max-w-7xl">
 
         {/* =========================
             Header
         ========================= */}
 
-        <div className="mb-6">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
-          >
-            <ArrowLeft size={18} />
-            Back
-          </button>
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
-          <h1 className="text-3xl font-bold text-slate-900">
-            Create MCQ Exam
-          </h1>
+{/* Left Side */}
 
-          <p className="mt-1 text-sm text-slate-500">
-            Create an exam and add MCQ questions.
-          </p>
-        </div>
+  <div>
+    <button
+      type="button"
+      onClick={() => router.back()}
+      className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-900"
+    >
+      <ArrowLeft size={18} />
+      Back
+    </button>
+
+
+<h1 className="text-3xl font-bold text-slate-900">
+  Create MCQ Exam
+</h1>
+
+<p className="mt-1 text-sm text-slate-500">
+  Create an exam and add MCQ questions.
+</p>
+
+
+  </div>
+
+{/* Right Side Edit Button */}
+<a
+  type="button"
+  href={`/MCQ/Edit`}
+  className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-md active:translate-y-0"
+>
+  <Pencil size={17} />
+  Edit
+</a>
+</div>
+
 
         <form onSubmit={handleSubmit}>
 
