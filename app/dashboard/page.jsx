@@ -3858,6 +3858,39 @@ const deletemcqresult = async (id) => {
     (item) => item.status === "rejected"
   ).length;
 
+const DELETapplystudent = async (id) => {
+try {
+const res = await fetch(
+`https://my-school-backend-iota.vercel.app/api/addmition/DELETapplystudent/${id}`,
+{
+method: "DELETE",
+}
+);
+fetchApplications()
+
+const data = await res.json();
+
+console.log(data);
+
+if (!res.ok) {
+  alert(data.message || "Delete failed");
+  return;
+}
+
+alert("Student deleted successfully");
+
+
+
+
+} catch (error) {
+console.error("Delete error:", error);
+alert("Server error");
+}
+};
+
+
+
+
   return (
     <div className="min-h-screen bg-slate-100 p-5 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -4111,6 +4144,17 @@ const deletemcqresult = async (id) => {
                       </div>
                     </div>
                   </div>
+
+                 <button
+  onClick={() => DELETapplystudent(student.id)}
+  className="group flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-500/20 active:translate-y-0"
+>
+  <Trash2
+    size={17}
+    className="transition-transform duration-200 group-hover:scale-110"
+  />
+  Delete
+</button>
                 </div>
               </div>
             ))}
