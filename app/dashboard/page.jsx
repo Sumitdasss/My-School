@@ -61,7 +61,7 @@ function IntegratedAdminDashboard() {
         }
 
         const response = await fetch(
-          `http://localhost:5000/api/admintest/admin-test`,
+          `https://my-school-backend-iota.vercel.app/api/admintest/admin-test`,
           {
             method: "GET",
 
