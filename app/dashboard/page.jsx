@@ -44,6 +44,58 @@ function IntegratedAdminDashboard() {
     activities: [],
   });
 
+
+
+  useEffect(() => {
+
+    const getAdminData = async () => {
+
+      try {
+
+        const token =
+          localStorage.getItem("token");
+
+        if (!token) {
+          console.log("❌ Admin token নেই");
+          return;
+        }
+
+        const response = await fetch(
+          `http://localhost:5000/api/admintest/admin-test`,
+          {
+            method: "GET",
+
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data =
+          await response.json();
+
+        console.log(
+          "Admin API Response:",
+          data
+        );
+
+      } catch (error) {
+
+        console.error(
+          "❌ API Error:",
+          error
+        );
+
+      }
+
+    };
+
+    getAdminData();
+
+  }, []);
+
+
+
   // Management State (AdminManage)
   const [tab, setTab] = useState("subjects");
   const [subjects, setSubjects] = useState([]);

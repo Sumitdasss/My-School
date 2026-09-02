@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import {
+import{
   User,
   Lock,
   Mail,
@@ -70,6 +70,7 @@ export default function StudentAuth() {
 
   const handleRegisterChange = (e) => {
     setRegisterData({
+      
       ...registerData,
       [e.target.name]: e.target.value,
     });
