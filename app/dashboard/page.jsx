@@ -412,22 +412,15 @@ const handleImageChange = (e) => {
     formData.append("category", deta.category);
     formData.append("date", deta.date);
     formData.append("urgent", deta.urgent);
+ formData.append("shortDescription",deta.shortDescription);
 
-    formData.append(
-      "shortDescription",
-      deta.shortDescription
-    );
-
-    formData.append(
-      "description",
-      deta.description
-    );
+    formData.append("description",deta.description);
 
     if (imageFile) {
       formData.append("file", imageFile);
     }
 
-    const res = await fetch("/api/Notice", {
+    const res = await fetch("http://localhost:5000/api/addnotice/notice11", {
       method: "POST",
       body: formData,
     });
