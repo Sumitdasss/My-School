@@ -420,7 +420,7 @@ const handleImageChange = (e) => {
       formData.append("file", imageFile);
     }
 
-    const res = await fetch("http://localhost:5000/api/addnotice/notice11", {
+    const res = await fetch("https://my-school-backend-iota.vercel.app/api/addnotice/notice11", {
       method: "POST",
       body: formData,
     });
