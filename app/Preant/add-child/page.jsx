@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function AddChild() {
   const router = useRouter();
 
-  const [parentId, setParentId] = useState(null);
+
 
   const [formData, setFormData] = useState({
     studentName: "",
@@ -20,53 +20,108 @@ export default function AddChild() {
   const [sections, setSections] = useState([]);
 
   const [loading, setLoading] = useState(false);
-
+  const [filterLoading, setFilterLoading] = useState(true);
 
   // =====================================
   // GET PARENT
   // =====================================
 
-  useEffect(() => {
-    try {
-      const storedParent = localStorage.getItem("Parent");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      if (!storedParent) {
-        alert("Parent login required");
-        router.push("/ParentLogin");
-        return;
-      }
+  if (
+    !formData.studentName.trim() ||
+    !formData.rollNumber ||
+    !formData.class1 ||
+    !formData.section
+  ) {
+    alert("Please fill all fields");
+    return;
+  }
 
-      const parent = JSON.parse(storedParent);
+  try {
+    setLoading(true);
 
-      if (!parent?.id) {
-        alert("Invalid parent information");
-        router.push("/ParentLogin");
-        return;
-      }
+    const token = localStorage.getItem("Parenttoken");
 
-      setParentId(Number(parent.id));
-
-    } catch (error) {
-      console.error("Parent localStorage error:", error);
-
-      localStorage.removeItem("Parent");
-
+    if (!token) {
+      alert("Parent login required");
       router.push("/ParentLogin");
+      return;
     }
-  }, [router]);
 
+    const payload = {
+      studentName: formData.studentName.trim(),
+      rollNumber: Number(formData.rollNumber),
+      class1: formData.class1,
+      section: formData.section,
+    };
+
+    console.log("Add Child Payload:", payload);
+
+    const res = await fetch(
+      "http://localhost:5000/api/ParentRegistar/add-child",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data = await res.json();
+
+    console.log("Add Child Response:", data);
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+          data.error ||
+          "Something went wrong"
+      );
+    }
+
+    alert(data.message || "Child Added Successfully");
+
+    setFormData({
+      studentName: "",
+      rollNumber: "",
+      class1: "",
+      section: "",
+    });
+
+    router.push("/Preant/MyStudent");
+
+  } catch (error) {
+    console.error("Add Child Error:", error);
+
+    alert(error.message || "Server Error");
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =====================================
   // GET CLASS & SECTION
-  // =====================================
 
+      
   useEffect(() => {
     const getFilters = async () => {
       try {
-        const token = localStorage.getItem("parentToken");
+        const token = localStorage.getItem("Parenttoken");
+
+        if (!token) {
+          console.error("Parent token not found");
+          return;
+        }
 
         const res = await fetch(
-          "http://localhost:5000/api/Teacher/student-filters",
+          "http://localhost:5000/api/Teacher/allStudent-filter",
           {
             method: "GET",
             headers: {
@@ -77,6 +132,8 @@ export default function AddChild() {
 
         const data = await res.json();
 
+        console.log("Filters Response:", data);
+
         if (!res.ok) {
           throw new Error(
             data.message || "Failed to get filters"
@@ -85,18 +142,15 @@ export default function AddChild() {
 
         setClasses(data.classes || []);
         setSections(data.sections || []);
-
       } catch (error) {
-        console.error(
-          "Get filters error:",
-          error
-        );
+        console.error("Get filters error:", error);
+      } finally {
+        setFilterLoading(false);
       }
     };
 
     getFilters();
   }, []);
-
 
   // =====================================
   // INPUT CHANGE
@@ -111,98 +165,9 @@ export default function AddChild() {
     }));
   };
 
-
   // =====================================
   // SUBMIT
   // =====================================
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!parentId) {
-      alert("Parent login required");
-      return;
-    }
-
-    if (
-      !formData.studentName ||
-      !formData.rollNumber ||
-      !formData.class1 ||
-      !formData.section
-    ) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const token =
-        localStorage.getItem("parentToken");
-
-      if (!token) {
-        alert("Parent login required");
-        router.push("/ParentLogin");
-        return;
-      }
-
-
-      const res = await fetch(
-        "http://localhost:5000/api/ParentRegistar/add-child",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            parentId,
-            studentName: formData.studentName.trim(),
-            rollNumber: Number(formData.rollNumber),
-            class1: formData.class1,
-            section: formData.section,
-          }),
-        }
-      );
-
-
-      const data = await res.json();
-
-
-      if (!res.ok) {
-        throw new Error(
-          data.message ||
-          data.error ||
-          "Something went wrong"
-        );
-      }
-
-
-      alert(
-        data.message ||
-        "Child Added Successfully"
-      );
-
-      router.push("/Preant/MyStudent");
-
-    } catch (error) {
-
-      console.error(
-        "Add Child Error:",
-        error
-      );
-
-      alert(
-        error.message ||
-        "Server Error"
-      );
-
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
   // =====================================
@@ -218,7 +183,6 @@ export default function AddChild() {
           Add Child
         </h1>
 
-
         <form
           onSubmit={handleSubmit}
           className="space-y-5"
@@ -232,12 +196,11 @@ export default function AddChild() {
             placeholder="Student Name"
             value={formData.studentName}
             onChange={handleChange}
-            className="w-full border p-3 rounded-xl"
+            className="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-[#D4AF37]"
             required
           />
 
-
-          {/* Roll */}
+          {/* Roll Number */}
 
           <input
             type="number"
@@ -245,10 +208,10 @@ export default function AddChild() {
             placeholder="Roll Number"
             value={formData.rollNumber}
             onChange={handleChange}
-            className="w-full border p-3 rounded-xl"
+            className="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-[#D4AF37]"
             required
+            min="1"
           />
-
 
           {/* Class */}
 
@@ -256,12 +219,15 @@ export default function AddChild() {
             name="class1"
             value={formData.class1}
             onChange={handleChange}
-            className="w-full border rounded-xl p-3"
+            className="w-full border border-gray-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#D4AF37]"
             required
+            disabled={filterLoading}
           >
 
             <option value="">
-              Select Class
+              {filterLoading
+                ? "Loading Classes..."
+                : "Select Class"}
             </option>
 
             {classes.map((item, index) => (
@@ -275,19 +241,21 @@ export default function AddChild() {
 
           </select>
 
-
           {/* Section */}
 
           <select
             name="section"
             value={formData.section}
             onChange={handleChange}
-            className="w-full border rounded-xl p-3"
+            className="w-full border border-gray-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#D4AF37]"
             required
+            disabled={filterLoading}
           >
 
             <option value="">
-              Select Section
+              {filterLoading
+                ? "Loading Sections..."
+                : "Select Section"}
             </option>
 
             {sections.map((item, index) => (
@@ -301,20 +269,15 @@ export default function AddChild() {
 
           </select>
 
-
           {/* Submit */}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#D4AF37] hover:bg-[#c49f2f] py-3 rounded-xl font-bold disabled:opacity-50"
-          >
-
-            {loading
-              ? "Adding Child..."
-              : "Add Child"}
-
-          </button>
+       <button
+  type="submit"
+  disabled={loading}
+  className="w-full bg-[#D4AF37] hover:bg-[#c49f2f] py-3 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {loading ? "Adding Child..." : "Add Child"}
+</button>
 
         </form>
 
