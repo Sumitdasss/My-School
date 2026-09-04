@@ -381,7 +381,7 @@ useEffect(() => {
   );
 
   window.addEventListener(
-    "parent-login",
+    "Parent-login",
     loadProfile
   );
 
