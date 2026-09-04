@@ -95,11 +95,11 @@ export default function StudentAuth() {
     console.log(data);
 
     if (res.ok) {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("Teachertoken", data.token);
 
       localStorage.setItem("Teacher", JSON.stringify(data.teacher));
 
-      window.dispatchEvent(new Event("Teacher-login"));
+      window.dispatchEvent(new Event("teacher-login"));
 
       toast.success("Login Successful!");
 

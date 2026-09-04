@@ -97,7 +97,7 @@ setLoading(true)
     console.log(data);
 
     if (res.ok) {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("Parenttoken", data.token);
 
       localStorage.setItem("Parent", JSON.stringify(data.Parentall));
 

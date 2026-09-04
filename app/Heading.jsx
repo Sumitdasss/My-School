@@ -85,182 +85,443 @@ export default function Navbar() {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
   const router =useRouter()
-// const [user, setUser] = useState(null);
+const [userData, setUserData] = useState(null);
+const [role, setRole] = useState(null);
 
 
-// useEffect(() => {
+// =====================================
+// STUDENT PROFILE
+// =====================================
 
-//   const loadUser = () => {
+const getStudentProfile = async () => {
 
-//     const student1 = localStorage.getItem("student");
-//     const parent = localStorage.getItem("Parent");
-//     const teacher = localStorage.getItem("Teacher");
+  const token = localStorage.getItem(
+    "Studenttoken"
+  );
 
+  if (!token) {
+    return null;
+  }
 
-//     try {
+  try {
 
-//       if (student1 && student1 !== "undefined") {
+    const response = await fetch(
+      "https://my-school-backend-iota.vercel.app/api/studentlogin/profile",
+      {
+        method: "GET",
 
-//         setUser(JSON.parse(student1));
-
-//       } 
-//       else if (parent && parent !== "undefined") {
-
-//         setUser(JSON.parse(parent));
-
-//       } 
-//       else if (teacher && teacher !== "undefined") {
-
-//         setUser(JSON.parse(teacher));
-
-//       } 
-//       else {
-
-//         setUser(null);
-
-//       }
-
-//     } catch(error) {
-
-//       console.log("JSON Parse Error:", error);
-
-//       localStorage.removeItem("student");
-//       localStorage.removeItem("Parent");
-//       localStorage.removeItem("Teacher");
-
-//       setUser(null);
-//     }
-
-//   };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
 
-//   loadUser();
-
-//   window.addEventListener("student-login", loadUser);
-//   window.addEventListener("Parent-login", loadUser);
-//   window.addEventListener("Teacher-login", loadUser);
+    const data = await response.json();
 
 
-//   return () => {
-//     window.removeEventListener("student-login", loadUser);
-//     window.removeEventListener("Parent-login", loadUser);
-//     window.removeEventListener("Teacher-login", loadUser);
-//   };
+    if (!response.ok) {
 
-// }, []);
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        localStorage.removeItem(
+          "Studenttoken"
+        );
+
+      }
+
+      return null;
+    }
 
 
- 
+    return {
+      user: data.data,
+      role: "student",
+    };
 
-// console.log(user);
 
-const handleLogout = () => {
-  localStorage.removeItem("student");
-  localStorage.removeItem("Parent");
-  localStorage.removeItem("Teacher");
+  } catch (error) {
 
-  window.dispatchEvent(new Event("student-login"));
-  
+    console.error(
+      "Student Profile Error:",
+      error
+    );
 
-  if (role === "student") {
-  router.push("/Studentlogin");
-} else if (role === "parent") {
-  router.push("/Preant");
-} else if (role === "Teacher") {
-  router.push("/Teacher/Teacherlogin");
-}
+    return null;
+
+  }
+
 };
 
 
- const [userData, setUserData] = useState(null);
- const [role, setRole] = useState(null);
+// =====================================
+// PARENT PROFILE
+// =====================================
 
+const getParentProfile = async () => {
+
+  const token = localStorage.getItem(
+    "Parenttoken"
+  );
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+
+    const response = await fetch(
+      "https://my-school-backend-iota.vercel.app/api/ParentRegistar/parentprofile",
+      {
+        method: "GET",
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        localStorage.removeItem(
+          "Parenttoken"
+        );
+
+      }
+
+      return null;
+
+    }
+
+
+    return {
+      user: data.data,
+      role: "parent",
+    };
+
+
+  } catch (error) {
+
+    console.error(
+      "Parent Profile Error:",
+      error
+    );
+
+    return null;
+
+  }
+
+};
+
+
+// =====================================
+// TEACHER PROFILE
+// =====================================
+
+const getTeacherProfile = async () => {
+
+  const token = localStorage.getItem(
+    "Teachertoken"
+  );
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+
+    const response = await fetch(
+      "https://my-school-backend-iota.vercel.app/api/TeacherRegistar/teacherprofile",
+      {
+        method: "GET",
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        localStorage.removeItem(
+          "Teachertoken"
+        );
+
+      }
+
+      return null;
+
+    }
+
+
+    return {
+      user: data.data,
+      role: "teacher",
+    };
+
+
+  } catch (error) {
+
+    console.error(
+      "Teacher Profile Error:",
+      error
+    );
+
+    return null;
+
+  }
+
+};
+
+
+// =====================================
+// LOAD LOGGED IN USER
+// =====================================
 
 useEffect(() => {
 
-  const loadUser = async () => {
+  const loadProfile = async () => {
 
-    try {
-
-      const student = JSON.parse(localStorage.getItem("student"));
-      const parent = JSON.parse(localStorage.getItem("Parent"));
-      const teacher = JSON.parse(localStorage.getItem("Teacher"));
+    // প্রথমে Student check
+    const student =
+      await getStudentProfile();
 
 
-     
+    if (student) {
 
+      setUserData(
+        student.user
+      );
 
-      if(student?.id){
+      setRole(
+        student.role
+      );
 
-        const res = await fetch(`https://my-school-backend-iota.vercel.app/api/studentlogin/getstudentlogindeta?id=${student.id}`);
-        const data = await res.json();
-
-     
-
-        setUserData(data.data)
-        setRole("student")
-
-      }
-
-    else if(parent?.id){
-
-  const res = await fetch(`/api/ParentRegistar/${parent.id}`);
-  const data = await res.json();
-
-  console.log("Parent API:", data);
-
-  setUserData(data);
-  setRole("parent");
-
-}
-      else if(teacher?.id){
-
-        const res = await fetch(`/api/Teacher/${teacher.id}`);
-        const data = await res.json();
-
-        console.log("Teacher API:", data);
-
-        setUserData(data);
-        setRole("Teacher")
-
-      }
-
-      else{
-
-        setUserData(null);
-
-      }
-
-
-    } catch(error){
-
-      console.log(error);
+      return;
 
     }
+
+
+    // তারপর Parent check
+    const parent =
+      await getParentProfile();
+
+
+    if (parent) {
+
+      setUserData(
+        parent.user
+      );
+
+      setRole(
+        parent.role
+      );
+
+      return;
+
+    }
+
+
+    // তারপর Teacher check
+    const teacher =
+      await getTeacherProfile();
+
+
+    if (teacher) {
+
+      setUserData(
+        teacher.user
+      );
+
+      setRole(
+        teacher.role
+      );
+
+      return;
+
+    }
+
+
+    // কেউ logged in নেই
+    setUserData(null);
+
+    setRole(null);
 
   };
 
 
-  loadUser();
+  loadProfile();
 
 
-  window.addEventListener("student-login", loadUser);
-  window.addEventListener("Parent-login", loadUser);
-  window.addEventListener("Teacher-login", loadUser);
-  window.addEventListener("logout", loadUser);
+  // Login events
+  window.addEventListener(
+    "student-login",
+    loadProfile
+  );
+
+  window.addEventListener(
+    "parent-login",
+    loadProfile
+  );
+
+  window.addEventListener(
+    "teacher-login",
+    loadProfile
+  );
 
 
-  return()=>{
+  // Logout event
+  window.addEventListener(
+    "logout",
+    loadProfile
+  );
 
-    window.removeEventListener("student-login", loadUser);
-    window.removeEventListener("Parent-login", loadUser);
-    window.removeEventListener("Teacher-login", loadUser);
-    window.removeEventListener("logout", loadUser);
+
+  return () => {
+
+    window.removeEventListener(
+      "student-login",
+      loadProfile
+    );
+
+    window.removeEventListener(
+      "parent-login",
+      loadProfile
+    );
+
+    window.removeEventListener(
+      "teacher-login",
+      loadProfile
+    );
+
+    window.removeEventListener(
+      "logout",
+      loadProfile
+    );
+
+  };
+
+
+}, []);
+
+
+// =====================================
+// LOGOUT
+// =====================================
+
+const handleLogout = () => {
+
+  const currentRole = role;
+
+
+  // শুধু current user-এর token remove করা ভালো
+  if (
+    currentRole === "student"
+  ) {
+
+    localStorage.removeItem(
+      "Studenttoken"
+    );
 
   }
 
 
-}, []);
+  if (
+    currentRole === "parent"
+  ) {
+
+    localStorage.removeItem(
+      "Parenttoken"
+    );
+
+  }
+
+
+  if (
+    currentRole === "teacher"
+  ) {
+
+    localStorage.removeItem(
+      "Teachertoken"
+    );
+
+  }
+
+
+  // State clear
+  setUserData(null);
+
+  setRole(null);
+
+
+  // Event
+  window.dispatchEvent(
+    new Event("logout")
+  );
+
+
+  // Redirect
+  if (
+    currentRole === "student"
+  ) {
+
+    router.push(
+      "/Studentlogin"
+    );
+
+  }
+
+
+  else if (
+    currentRole === "parent"
+  ) {
+
+    router.push(
+      "/Preant"
+    );
+
+  }
+
+
+  else if (
+    currentRole === "teacher"
+  ) {
+
+    router.push(
+      "/Teacher/Teacherlogin"
+    );
+
+  }
+
+
+  else {
+
+    router.push("/");
+
+  }
+
+};
 
 
 
@@ -414,7 +675,7 @@ useEffect(() => {
   </>
 )}
 
-{role==="Teacher" && (
+{role==="teacher" && (
   <>
     <Link href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
       My Profile
@@ -655,7 +916,7 @@ useEffect(() => {
   </>
 )}
 
-{role==="Teacher" && (
+{role==="teacher" && (
   <>
     <Link   onClick={() => setIsOpen(false)} href="/Studentlogin/StudentProfile" className="block px-4 py-3 hover:bg-gray-100">
       My Profile

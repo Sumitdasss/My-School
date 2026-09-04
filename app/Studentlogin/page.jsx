@@ -100,7 +100,7 @@ setLoading(true);
     console.log(data);
 
     if (res.ok) {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("Studenttoken", data.token);
 
       localStorage.setItem("student", JSON.stringify(data.student));
 
