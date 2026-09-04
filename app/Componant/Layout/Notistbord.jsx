@@ -9,7 +9,7 @@ export default function NoticeBoard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/addnotice/allnotice")
+    fetch("https://my-school-backend-iota.vercel.app/api/addnotice/allnotice")
       .then((res) => res.json())
       .then((data) => {
         setNotices(Array.isArray(data.data) ? data.data : []);
