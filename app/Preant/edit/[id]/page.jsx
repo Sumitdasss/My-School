@@ -27,10 +27,7 @@ const { id } = useParams();
   fullName: "",
   email: "",
   phone: "",
-  childName: "",
-  childClass: "",
-  childRoll: "",
-  childEmail: "",
+
  
 });
 
@@ -55,10 +52,7 @@ const loadStudent = async () => {
   fullName: Parent.fullName || "",
   email: Parent.email || "",
   phone: Parent.phone || "",
-  childName: Parent.childName || "",
-  childClass: Parent.childClass || "",
-  childRoll: Parent.childRoll || "",
-  childEmail: Parent.childEmail || "",
+
   
 });
     setImagePreview(Parent.photo);
@@ -94,10 +88,7 @@ console.log("ID:", id);
    
     data.append("email", formData.email);
     data.append("phone", formData.phone);
-    data.append("childName", formData.childName);
-    data.append("childClass", formData.childClass);
-    data.append("childEmail", formData.childEmail);
-    data.append("childRoll", formData.childRoll);
+    
   
     
    
@@ -209,19 +200,7 @@ console.log("ID:", id);
                                placeholder="parent@email.com"
                              />
                            </div>
-                           <label className="block text-sm text-slate-300 mb-2">childEmail Address</label>
-                           <div className="relative">
-                             <Mail className="absolute left-5 top-4 text-slate-400" />
-                             <input
-                               type="email"
-                               name="childEmail"
-                               value={formData.childEmail}
-                               onChange={handleChange}
-                               required
-                               className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                               placeholder="Student Email"
-                             />
-                           </div>
+                          
                          </div>
            
                          <div>
@@ -242,39 +221,10 @@ console.log("ID:", id);
                        </div>
            
                        <div className="grid md:grid-cols-2 gap-8">
-                         <div>
-                           <label className="block text-sm text-slate-300 mb-2">Child's Name</label>
-                           <input
-                             type="text"
-                             name="childName"
-                             value={formData.childName}
-                             onChange={handleChange}
-                             required
-                             className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                             placeholder="Child's full name"
-                           />
-                         </div>
+                        
            
                          <div>
-                           <label className="block text-sm text-slate-300 mb-2">Child's Class & Roll</label>
-                           <div className="flex gap-3">
-                             <input
-                               type="text"
-                               name="childClass"
-                               value={formData.childClass}
-                               onChange={handleChange}
-                               placeholder="Class 8"
-                               className="w-1/2 bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                             />
-                             <input
-                               type="text"
-                               name="childRoll"
-                               value={formData.childRoll}
-                               onChange={handleChange}
-                               placeholder="Roll 45"
-                               className="w-1/2 bg-white/10 border border-white/20 rounded-2xl py-4 px-5 focus:outline-none focus:border-[#D4AF37] text-white"
-                             />
-                           </div>
+                          
                          </div>
                        </div>
            
