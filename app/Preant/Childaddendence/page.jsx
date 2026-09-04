@@ -19,29 +19,64 @@ export default function ParentAttendancePage() {
   }, []);
 
   const loadAttendance = async () => {
-    try {
-      const parent = JSON.parse(localStorage.getItem("Parent"));
+  try {
+    setLoading(true);
 
-      if (!parent) {
-        setLoading(false);
+    const token = localStorage.getItem("Parenttoken");
+
+    if (!token) {
+      alert("Parent login required");
+      window.location.href = "/Preant";
+      return;
+    }
+
+    const res = await fetch(
+      "https://my-school-backend-iota.vercel.app/api/ParentRegistar/getParentAttendance",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await res.json();
+
+    console.log("Attendance Response:", result);
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem("Parenttoken");
+
+        alert("Parent session expired");
+
+        window.location.href = "/ParentLogin";
+
         return;
       }
 
-      const res = await fetch(
-        `/api/ParentRegistar/attendance?parentId=${parent.id}`
+      throw new Error(
+        result.message || "Failed to load attendance"
       );
-
-   const result = await res.json();
-
-setChildren(result.children);
-console.log("Children Attendance Data:", result.children);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
     }
-  };
 
+    if (result.success) {
+      setChildren(result.children || []);
+    } else {
+      setChildren([]);
+    }
+
+  } catch (err) {
+    console.error("Attendance Error:", err);
+
+    alert(
+      err.message || "Failed to load attendance"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-xl">

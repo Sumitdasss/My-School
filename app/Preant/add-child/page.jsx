@@ -60,7 +60,7 @@ export default function AddChild() {
     console.log("Add Child Payload:", payload);
 
     const res = await fetch(
-      "http://localhost:5000/api/ParentRegistar/add-child",
+      "https://my-school-backend-iota.vercel.app/api/ParentRegistar/addchild",
       {
         method: "POST",
 
@@ -121,7 +121,7 @@ export default function AddChild() {
         }
 
         const res = await fetch(
-          "http://localhost:5000/api/Teacher/allStudent-filter",
+          "https://my-school-backend-iota.vercel.app/api/Teacher/allStudent-filter",
           {
             method: "GET",
             headers: {
