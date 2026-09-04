@@ -195,7 +195,7 @@ const handleAnswer = (qIndex, option) => {
       // SEND TO BACKEND
       // ------------------------------------
 
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("Studenttoken");
 
 console.log("OMR TOKEN:", token);
 
