@@ -45,10 +45,7 @@ export default function ParentAuth() {
     fullName: "",
     email: "",
     phone: "",
-    childName: "",
-    childClass: "",
-    childEmail: "",
-    childRoll: "",
+
     password: "",
     confirmPassword: "",
   });
@@ -146,11 +143,9 @@ setLoading(true)
       data.append("fullName", registerData.fullName);
       data.append("email", registerData.email);
       data.append("phone", registerData.phone);
-      data.append("childName", registerData.childName);
-      data.append("childClass", registerData.childClass);
-      data.append("childRoll", registerData.childRoll);
+
       data.append("password", registerData.password);
-      data.append("childEmail", registerData.childEmail);
+   
 
       /* IMAGE */
 
@@ -190,10 +185,7 @@ setLoading(true)
         fullName: "",
         email: "",
         phone: "",
-        childName: "",
-        childClass: "",
-        childEmail: "",
-        childRoll: "",
+     
         password: "",
         confirmPassword: "",
       });
@@ -857,159 +849,15 @@ setLoading(true)
 
                   {/* CHILD NAME */}
 
-                  <div>
-                    <label
-                      className="
-                      block
-                      text-sm
-                      text-slate-300
-                      mb-2
-                    "
-                    >
-                      Child's Name
-                    </label>
-
-                    <input
-                      type="text"
-                      name="childName"
-                      value={registerData.childName}
-                      onChange={handleRegisterChange}
-                      required
-                      className="
-                        w-full
-                        bg-white/10
-                        border
-                        border-white/20
-                        rounded-2xl
-                        py-4
-                        px-5
-                        focus:outline-none
-                        focus:border-[#D4AF37]
-                        text-white
-                      "
-                      placeholder="Child's full name"
-                    />
-                  </div>
+           
 
                   {/* CHILD EMAIL */}
 
-                  <div>
-                    <label
-                      className="
-                      block
-                      text-sm
-                      text-slate-300
-                      mb-2
-                    "
-                    >
-                      Child Email Address
-                    </label>
-
-                    <div className="relative">
-                      <Mail
-                        className="
-                          absolute
-                          left-5
-                          top-4
-                          text-slate-400
-                        "
-                      />
-
-                      <input
-                        type="email"
-                        name="childEmail"
-                        value={registerData.childEmail}
-                        onChange={handleRegisterChange}
-                        required
-                        className="
-                          w-full
-                          bg-white/10
-                          border
-                          border-white/20
-                          rounded-2xl
-                          py-4
-                          pl-14
-                          pr-5
-                          focus:outline-none
-                          focus:border-[#D4AF37]
-                          text-white
-                        "
-                        placeholder="Student Email"
-                      />
-                    </div>
-                  </div>
+               
 
                   {/* CHILD CLASS & ROLL */}
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        className="
-                        block
-                        text-sm
-                        text-slate-300
-                        mb-2
-                      "
-                      >
-                        Child's Class
-                      </label>
-
-                      <input
-                        type="text"
-                        name="childClass"
-                        value={registerData.childClass}
-                        onChange={handleRegisterChange}
-                        required
-                        className="
-                          w-full
-                          bg-white/10
-                          border
-                          border-white/20
-                          rounded-2xl
-                          py-4
-                          px-5
-                          focus:outline-none
-                          focus:border-[#D4AF37]
-                          text-white
-                        "
-                        placeholder="Class 8"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        className="
-                        block
-                        text-sm
-                        text-slate-300
-                        mb-2
-                      "
-                      >
-                        Child's Roll
-                      </label>
-
-                      <input
-                        type="text"
-                        name="childRoll"
-                        value={registerData.childRoll}
-                        onChange={handleRegisterChange}
-                        required
-                        className="
-                          w-full
-                          bg-white/10
-                          border
-                          border-white/20
-                          rounded-2xl
-                          py-4
-                          px-5
-                          focus:outline-none
-                          focus:border-[#D4AF37]
-                          text-white
-                        "
-                        placeholder="Roll 45"
-                      />
-                    </div>
-                  </div>
+             
                 </div>
 
                 {/* SECURITY */}

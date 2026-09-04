@@ -2387,7 +2387,7 @@ function Teachers() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/Teacher/Allteacher");
+      const res = await fetch("http://localhost:5000/api/Teacher/all-teachers");
       const data = await res.json();
       setTeachers(data.data || []);
     } catch (err) {
@@ -2413,7 +2413,7 @@ function Teachers() {
   if (!confirmDelete) return;
 
   try {
-    const res = await fetch(`/api/Teacher/Allteacher/${id}`, {
+    const res = await fetch(`http://localhost:5000/api/Teacher/all-teachers/${id}`, {
       method: "DELETE",
     });
 
@@ -2631,7 +2631,7 @@ function Parent() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/ParentRegistar/Allparent");
+      const res = await fetch("http://localhost:5000/api/ParentRegistar/all-parents");
       const data = await res.json();
       setTeachers(data.data || []);
     } catch (err) {
@@ -2653,7 +2653,7 @@ function Parent() {
   if (!confirmDelete) return;
 
   try {
-    const res = await fetch(`/api/ParentRegistar/Allparent/${id}`, {
+    const res = await fetch(`http://localhost:5000/api/ParentRegistar/all-parents/${id}`, {
   method: "DELETE",
 });
 
